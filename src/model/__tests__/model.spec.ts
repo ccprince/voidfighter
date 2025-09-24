@@ -23,6 +23,19 @@ describe('Defense stat', () => {
   })
 })
 
+describe('Pilot stat', () => {
+  it.each([
+    { ship: Gunship({ pilotBase: Rating.D8 }), expected: new Stat(Rating.D8) },
+    {
+      ship: Gunship({ pilotBase: Rating.D8, upgrades: ['Agile'] }),
+      expected: new Stat(Rating.D8, 1),
+    },
+    { ship: Gunship(), expected: null },
+  ])('$ship -> $expected', ({ ship, expected }) => {
+    expect(ship.pilot).toEqual(expected)
+  })
+})
+
 describe('Stat', () => {
   it.each([
     [new Stat(Rating.D8), '2d8'],

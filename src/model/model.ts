@@ -193,6 +193,12 @@ export class Ship {
     return new Stat(this.defenseBase, this.hasUpgrade('Shields') ? 1 : 0)
   }
 
+  get pilot(): Stat | null {
+    return this.pilotBase
+      ? new Stat(this.pilotBase, this.hasUpgrade('Agile') ? 1 : 0)
+      : null
+  }
+
   get weapons(): Weapon[] {
     const modifier = this.hasUpgrade('Targeting Computer') ? 1 : 0
     return this.weaponsBase.map(
@@ -209,7 +215,7 @@ type SnubfighterOptions = {
   name?: string
   speed?: number
   weaponsBase?: WeaponBase[]
-  pilot?: Rating | null
+  pilotBase?: Rating | null
   upgrades?: UpgradeKeys[]
 }
 
@@ -217,7 +223,7 @@ export function Snubfighter({
   name = 'Snubfighter',
   speed = 2,
   weaponsBase = [],
-  pilot = null,
+  pilotBase = null,
   upgrades = [],
 }: SnubfighterOptions = {}) {
   return new Ship(
@@ -226,7 +232,7 @@ export function Snubfighter({
     speed,
     Rating.D6,
     weaponsBase,
-    pilot,
+    pilotBase,
     upgrades
   )
 }
@@ -235,7 +241,7 @@ type GunshipOptions = {
   name?: string
   speed?: number
   weaponsBase?: WeaponBase[]
-  pilot?: Rating | null
+  pilotBase?: Rating | null
   upgrades?: UpgradeKeys[]
 }
 
@@ -243,7 +249,7 @@ export function Gunship({
   name = 'Gunship',
   speed = 1,
   weaponsBase = [],
-  pilot = null,
+  pilotBase = null,
   upgrades = [],
 }: GunshipOptions = {}) {
   return new Ship(
@@ -252,7 +258,7 @@ export function Gunship({
     speed,
     Rating.D8,
     weaponsBase,
-    pilot,
+    pilotBase,
     upgrades
   )
 }
@@ -260,14 +266,14 @@ export function Gunship({
 type CorvetteOptions = {
   name?: string
   weaponsBase?: WeaponBase[]
-  pilot?: Rating | null
+  pilotBase?: Rating | null
   upgrades?: UpgradeKeys[]
 }
 
 export function Corvette({
   name = 'Corvette',
   weaponsBase = [],
-  pilot = null,
+  pilotBase = null,
   upgrades = [],
 }: CorvetteOptions = {}): Ship {
   return new Ship(
@@ -276,7 +282,7 @@ export function Corvette({
     1,
     Rating.D10,
     weaponsBase,
-    pilot,
+    pilotBase,
     upgrades
   )
 }
