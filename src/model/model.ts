@@ -40,8 +40,28 @@ export class Upgrade {
 }
 
 const UPGRADES = {
+  "Agile": new Upgrade("Agile", [ShipType.Snubfighter, ShipType.Gunship], Rarity.Common),
+  "Carrier": new Upgrade("Carrier", [ShipType.Gunship, ShipType.Corvette], Rarity.Rare),
+  "Death Flower": new Upgrade("Death Flower", [ShipType.Snubfighter, ShipType.Gunship], Rarity.Rare),
+  "Decoy": new Upgrade("Decoy", [ShipType.Gunship, ShipType.Corvette], Rarity.Uncommon),
+  "ECM": new Upgrade("ECM", [ShipType.Gunship, ShipType.Corvette], Rarity.Uncommon),
+  "Emergency Teleporter": new Upgrade("Emergency Teleporter", [ShipType.Snubfighter, ShipType.Gunship], Rarity.Rare),
+  "Enhanced Turret": new Upgrade("Enhanced Turret", [ShipType.Gunship, ShipType.Corvette], Rarity.Uncommon),
+  "Fast": new Upgrade("Fast", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
+  "Fully Loaded": new Upgrade("Fully Loaded", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
+  "Ground Support": new Upgrade("Ground Support", [ShipType.Gunship], Rarity.Uncommon),
+  "Hard Point": new Upgrade("Hard Point", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
+  "Maneuverable": new Upgrade("Maneuverable", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
+  "Mining Charges": new Upgrade("Mining Charges", [ShipType.Gunship, ShipType.Corvette], Rarity.Rare),
+  "Reinforced Hull": new Upgrade("Reinforced Hull", [ShipType.Corvette], Rarity.Rare),
+  "Repair": new Upgrade("Repair", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
   "Shields": new Upgrade("Shields", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
+  "Stealth": new Upgrade("Stealth", [ShipType.Snubfighter, ShipType.Gunship], Rarity.Uncommon),
+  "Tailgunner": new Upgrade("Tailgunner", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
   "Targeting Computer": new Upgrade("Targeting Computer", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
+  "Torpedoes": new Upgrade("Torpedoes", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
+  "Tractor Beam": new Upgrade("Tractor Beam", [ShipType.Corvette], Rarity.Rare, 0),
+  "Transport": new Upgrade("Transport", [ShipType.Gunship], Rarity.Uncommon, 0),
 }
 type UpgradesType = typeof UPGRADES
 type UpgradeKeys = keyof UpgradesType
@@ -79,7 +99,8 @@ export class Ship {
     public speed: number,
     protected readonly defenseBase: Rating,
     protected weaponsBase: WeaponBase[] = [],
-    public upgrades: UpgradeKeys[] = []
+    protected pilotBase: Rating | null = null,
+    protected upgradesBase: UpgradeKeys[] = []
   ) { }
 
   get defense(): Stat {
@@ -92,7 +113,7 @@ export class Ship {
   }
 
   protected hasUpgrade(name: UpgradeKeys): boolean {
-    return this.upgrades.includes(name)
+    return this.upgradesBase.includes(name)
   }
 }
 
@@ -100,11 +121,12 @@ type SnubfighterOptions = {
   name?: string,
   speed?: number,
   weaponsBase?: WeaponBase[],
-  upgrades?: UpgradeKeys[],
+  pilot?: Rating | null,
+  upgradesBase?: UpgradeKeys[],
 }
 
-export function Snubfighter({ name = "Snubfighter", speed = 2, weaponsBase = [], upgrades = [] }: SnubfighterOptions = {}) {
-  return new Ship(name, ShipType.Snubfighter, speed, Rating.D6, weaponsBase, upgrades)
+export function Snubfighter({ name = "Snubfighter", speed = 2, weaponsBase = [], pilot = null, upgradesBase = [] }: SnubfighterOptions = {}) {
+  return new Ship(name, ShipType.Snubfighter, speed, Rating.D6, weaponsBase, pilot, upgradesBase)
 }
 
 
@@ -112,19 +134,21 @@ type GunshipOptions = {
   name?: string,
   speed?: number,
   weaponsBase?: WeaponBase[],
-  upgrades?: UpgradeKeys[],
+  pilot?: Rating | null,
+  upgradesBase?: UpgradeKeys[],
 }
 
-export function Gunship({ name = "Gunship", speed = 1, weaponsBase = [], upgrades = [] }: GunshipOptions = {}) {
-  return new Ship(name, ShipType.Gunship, speed, Rating.D8, weaponsBase, upgrades)
+export function Gunship({ name = "Gunship", speed = 1, weaponsBase = [], pilot = null, upgradesBase = [] }: GunshipOptions = {}) {
+  return new Ship(name, ShipType.Gunship, speed, Rating.D8, weaponsBase, pilot, upgradesBase)
 }
 
 type CorvetteOptions = {
   name?: string,
   weaponsBase?: WeaponBase[],
-  upgrades?: UpgradeKeys[],
+  pilot?: Rating | null,
+  upgradesBase?: UpgradeKeys[],
 }
 
-export function Corvette({ name = "Corvette", weaponsBase = [], upgrades = [] }: CorvetteOptions = {}): Ship {
-  return new Ship(name, ShipType.Corvette, 1, Rating.D10, weaponsBase, upgrades)
+export function Corvette({ name = "Corvette", weaponsBase = [], pilot = null, upgradesBase = [] }: CorvetteOptions = {}): Ship {
+  return new Ship(name, ShipType.Corvette, 1, Rating.D10, weaponsBase, pilot, upgradesBase)
 }
