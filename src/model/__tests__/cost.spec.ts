@@ -1,30 +1,28 @@
 import { describe, expect, it } from 'vitest'
-import { costWithoutPilot } from '../cost.ts'
+import { costWithoutPilot, costWithPilot } from '../cost.ts'
 import { Corvette, Gunship, Rating, Snubfighter, WeaponArc } from '../model.ts'
 
 describe('Cost without pilot', () => {
-  describe('of a Snubfighter', () => {
-    it.each([
-      [{ speed: 2 }, 5],
-      [{ speed: 3 }, 7],
-    ])('$0 -> $1', (options, expected) => {
-      expect(costWithoutPilot(Snubfighter(options))).toEqual(expected)
-    })
+  it.each([
+    { ship: Snubfighter({ speed: 2 }), expected: 5 },
+    { ship: Snubfighter({ speed: 3 }), expected: 7 },
+    { ship: Gunship({ speed: 1 }), expected: 5 },
+    { ship: Gunship({ speed: 2 }), expected: 7 },
+    { ship: Corvette(), expected: 9 },
+  ])('$ship -> $expected', ({ ship, expected }) => {
+    expect(costWithoutPilot(ship)).toEqual(expected)
   })
+})
 
-  describe('of a Gunship', () => {
-    it.each([
-      [{ speed: 1 }, 5],
-      [{ speed: 2 }, 7],
-    ])('$0 -> $1', (options, expected) => {
-      expect(costWithoutPilot(Gunship(options))).toEqual(expected)
-    })
-  })
-
-  describe('of a Corvette', () => {
-    it.each([[{}, 9]])('$0 -> $1', (options, expected) => {
-      expect(costWithoutPilot(Corvette(options))).toBe(expected)
-    })
+describe('Cost with pilot', () => {
+  it.each([
+    { pilot: Rating.D6, expected: 6 },
+    { pilot: Rating.D8, expected: 8 },
+    { pilot: Rating.D10, expected: 10 },
+    { pilot: null, expected: 5 },
+  ])('$pilot -> $expected', ({ pilot, expected }) => {
+    const ship = Gunship({ pilotBase: pilot })
+    expect(costWithPilot(ship)).toEqual(expected)
   })
 })
 

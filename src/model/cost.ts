@@ -46,3 +46,16 @@ function upgradesCost(upgrades: UpgradeKeys[]): number {
     0
   )
 }
+
+const PILOT_COST = {
+  [Rating.D4]: 0,
+  [Rating.D6]: 1,
+  [Rating.D8]: 3,
+  [Rating.D10]: 5,
+  [Rating.D12]: 0,
+}
+
+export function costWithPilot(ship: Ship): number {
+  const pilotCost = ship.pilot ? PILOT_COST[ship.pilot.rating] : 0
+  return costWithoutPilot(ship) + pilotCost
+}

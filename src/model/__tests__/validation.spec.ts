@@ -287,12 +287,12 @@ describe('Validate weapons', () => {
       const ship = Corvette({
         weaponsBase: [
           { firepower: Rating.D8, arc: WeaponArc.Front },
-          { firepower: Rating.D8, arc: WeaponArc.Rear },
+          { firepower: Rating.D8, arc: WeaponArc.Turret },
           { firepower: Rating.D8, arc: WeaponArc.Turret },
           { firepower: Rating.D8, arc: WeaponArc.Turret },
           { firepower: Rating.D8, arc: WeaponArc.Turret },
         ],
-        upgrades: ['Hard Point', 'Tailgunner'],
+        upgrades: ['Hard Point'],
       })
       expect(validateShip(ship)).toEqual([
         'Corvettes with Hard Point may not carry more than four weapons',
@@ -477,5 +477,160 @@ describe('Upgrades', () => {
     ])('$ship.shipType', ({ ship, message }) => {
       expect(validateShip(ship)).toContain(message)
     })
+  })
+})
+
+describe('Pilot', () => {
+  describe('of a Snubfighter', () => {
+    it.each([
+      {
+        rating: Rating.D4,
+        expected: [
+          'The pilot stat for a Snubfighter must be 2d6, 2d8, or 2d10',
+        ],
+      },
+      { rating: Rating.D6, expected: [] },
+      { rating: Rating.D8, expected: [] },
+      { rating: Rating.D10, expected: [] },
+      {
+        rating: Rating.D12,
+        expected: [
+          'The pilot stat for a Snubfighter must be 2d6, 2d8, or 2d10',
+        ],
+      },
+    ])('$rating -> $expected', ({ rating, expected }) => {
+      const ship = Snubfighter({
+        pilotBase: rating,
+        weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+      })
+      expect(validateShip(ship)).toEqual(expected)
+    })
+  })
+
+  describe('of a Gunship', () => {
+    it.each([
+      {
+        rating: Rating.D4,
+        expected: ['The pilot stat for a Gunship must be 2d6, 2d8, or 2d10'],
+      },
+      { rating: Rating.D6, expected: [] },
+      { rating: Rating.D8, expected: [] },
+      { rating: Rating.D10, expected: [] },
+      {
+        rating: Rating.D12,
+        expected: ['The pilot stat for a Gunship must be 2d6, 2d8, or 2d10'],
+      },
+    ])('$rating -> $expected', ({ rating, expected }) => {
+      const ship = Gunship({
+        pilotBase: rating,
+      })
+      expect(validateShip(ship)).toEqual(expected)
+    })
+  })
+
+  describe('of a Corvette', () => {
+    it.each([
+      {
+        rating: Rating.D4,
+        expected: ['The pilot stat for a Corvette must be 2d6 or 2d8'],
+      },
+      { rating: Rating.D6, expected: [] },
+      { rating: Rating.D8, expected: [] },
+      {
+        rating: Rating.D10,
+        expected: ['The pilot stat for a Corvette must be 2d6 or 2d8'],
+      },
+      {
+        rating: Rating.D12,
+        expected: ['The pilot stat for a Corvette must be 2d6 or 2d8'],
+      },
+    ])('$rating -> $expected', ({ rating, expected }) => {
+      const ship = Corvette({
+        pilotBase: rating,
+      })
+      expect(validateShip(ship)).toEqual(expected)
+    })
+  })
+})
+
+describe('Max cost', () => {
+  it.each([
+    {
+      ship: Snubfighter({
+        speed: 3,
+        weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
+        upgrades: ['Fast', 'Agile', 'Maneuverable'],
+        pilotBase: Rating.D8,
+      }),
+      expected: [],
+    },
+    {
+      ship: Snubfighter({
+        speed: 3,
+        weaponsBase: [
+          { firepower: Rating.D8, arc: WeaponArc.Front },
+          { firepower: Rating.D6, arc: WeaponArc.Rear },
+        ],
+        upgrades: ['Fast', 'Tailgunner'],
+        pilotBase: Rating.D8,
+      }),
+      expected: [
+        "The ship's non-pilot cost (15) exceeds the maximum for a Snubfighter (14)",
+      ],
+    },
+    {
+      ship: Gunship({
+        speed: 2,
+        weaponsBase: [
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+          { firepower: Rating.D8, arc: WeaponArc.Turret },
+        ],
+        upgrades: ['Fast', 'Shields', 'Repair'],
+        pilotBase: Rating.D8,
+      }),
+      expected: [],
+    },
+    {
+      ship: Gunship({
+        speed: 2,
+        weaponsBase: [
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+          { firepower: Rating.D8, arc: WeaponArc.Turret },
+        ],
+        upgrades: ['Fast', 'Shields', 'Decoy', 'ECM'],
+        pilotBase: Rating.D8,
+      }),
+      expected: [
+        "The ship's non-pilot cost (21) exceeds the maximum for a Gunship (20)",
+      ],
+    },
+    {
+      ship: Corvette({
+        weaponsBase: [
+          { firepower: Rating.D10, arc: WeaponArc.Front },
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+        ],
+        upgrades: ['Carrier', 'Decoy', 'ECM'],
+        pilotBase: Rating.D8,
+      }),
+      expected: [],
+    },
+    {
+      ship: Corvette({
+        weaponsBase: [
+          { firepower: Rating.D10, arc: WeaponArc.Front },
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+        ],
+        upgrades: ['Carrier', 'Decoy', 'ECM', 'Torpedoes'],
+        pilotBase: Rating.D8,
+      }),
+      expected: [
+        "The ship's non-pilot cost (31) exceeds the maximum for a Corvette (30)",
+      ],
+    },
+  ])('$ship -> $expected', ({ ship, expected }) => {
+    expect(validateShip(ship)).toEqual(expected)
   })
 })

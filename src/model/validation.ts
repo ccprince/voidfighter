@@ -1,3 +1,4 @@
+import { costWithoutPilot } from './cost.ts'
 import { Rating, Ship, ShipType, UPGRADES, Weapon, WeaponArc } from './model.ts'
 
 export function validateShip(ship: Ship): string[] {
@@ -7,7 +8,9 @@ export function validateShip(ship: Ship): string[] {
     ...validateWeapons(ship),
     ...validateUpgrades(ship),
     validateUpgradeCount(ship),
-  ].filter((x) => x !== null)
+    validatePilot(ship),
+    validateCost(ship),
+  ].filter((x) => x != null)
 }
 
 const SPEED_LIMITS = {
@@ -192,6 +195,37 @@ function validateUpgradeCount(ship: Ship): string | null {
     return `${formatShipType(ship.shipType)}s${extraMessage} may have at most ${max} upgrades`
 
   return null
+}
+
+function validatePilot(ship: Ship): string | null {
+  let valid = [Rating.D6, Rating.D8]
+  let message = '2d6 or 2d8'
+  if (
+    ship.shipType === ShipType.Snubfighter ||
+    ship.shipType === ShipType.Gunship
+  ) {
+    valid.push(Rating.D10)
+    message = '2d6, 2d8, or 2d10'
+  }
+
+  const result =
+    ship.pilot == null || valid.includes(ship.pilot.rating)
+      ? null
+      : `The pilot stat for a ${formatShipType(ship.shipType)} must be ${message}`
+  return result
+}
+
+const MAX_COST = {
+  [ShipType.Snubfighter]: 14,
+  [ShipType.Gunship]: 20,
+  [ShipType.Corvette]: 30,
+}
+
+function validateCost(ship: Ship): string | null {
+  const shipCost = costWithoutPilot(ship)
+  return shipCost > MAX_COST[ship.shipType]
+    ? `The ship's non-pilot cost (${shipCost}) exceeds the maximum for a ${formatShipType(ship.shipType)} (${MAX_COST[ship.shipType]})`
+    : null
 }
 
 function formatShipType(t: ShipType): string {
