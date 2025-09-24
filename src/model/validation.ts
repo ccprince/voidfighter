@@ -55,9 +55,9 @@ function validateWeapons(ship: Ship): string[] {
 function validateSnubfighterWeapons(ship: Ship): string[] {
   if (ship.weapons.length < 1)
     return ['Snubfighters must carry at least one weapon']
-  else if (ship.weapons.length > 2 && !ship.upgrades.includes('Hard Point'))
+  else if (ship.weapons.length > 2 && !ship.hasUpgrade('Hard Point'))
     return ['Snubfighters may not carry more than two weapons']
-  else if (ship.upgrades.includes('Hard Point') && ship.weapons.length > 3)
+  else if (ship.hasUpgrade('Hard Point') && ship.weapons.length > 3)
     return [
       'Snubfighters with Hard Point may not carry more than three weapons',
     ]
@@ -82,9 +82,9 @@ function validateSnubfighterWeapons(ship: Ship): string[] {
 function validateGunshipWeapons(ship: Ship): string[] {
   let results: string[] = []
 
-  if (ship.weapons.length > 2 && !ship.upgrades.includes('Hard Point'))
+  if (ship.weapons.length > 2 && !ship.hasUpgrade('Hard Point'))
     results.push('Gunships may not carry more than two weapons')
-  else if (ship.upgrades.includes('Hard Point') && ship.weapons.length > 3)
+  else if (ship.hasUpgrade('Hard Point') && ship.weapons.length > 3)
     results.push(
       'Gunships with Hard Point may not carry more than three weapons'
     )
@@ -99,9 +99,9 @@ function validateGunshipWeapons(ship: Ship): string[] {
 function validateCorvetteWeapons(ship: Ship): string[] {
   let results: string[] = []
 
-  if (ship.weapons.length > 3 && !ship.upgrades.includes('Hard Point'))
+  if (ship.weapons.length > 3 && !ship.hasUpgrade('Hard Point'))
     results.push('Corvettes may not carry more than three weapons')
-  else if (ship.upgrades.includes('Hard Point') && ship.weapons.length > 4)
+  else if (ship.hasUpgrade('Hard Point') && ship.weapons.length > 4)
     results.push(
       'Corvettes with Hard Point may not carry more than four weapons'
     )
@@ -162,7 +162,7 @@ function validateUpgrades(ship: Ship): string[] {
     if (weapon.arc === WeaponArc.Rear) hasTailGun = true
   })
 
-  if (hasTailGun && !ship.upgrades.includes('Tailgunner')) {
+  if (hasTailGun && !ship.hasUpgrade('Tailgunner')) {
     results.push(
       'The ship must have a Tailgunner upgrade for its rear-facing weapon'
     )
@@ -191,7 +191,7 @@ function validateUpgradeCount(ship: Ship): string | null {
   }
 
   let extraMessage = ''
-  if (ship.upgrades.includes('Fully Loaded')) {
+  if (ship.hasUpgrade('Fully Loaded')) {
     max++
     extraMessage = ' with Fully Loaded'
   }

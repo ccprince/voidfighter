@@ -200,7 +200,7 @@ export class Ship {
     )
   }
 
-  protected hasUpgrade(name: UpgradeKeys): boolean {
+  public hasUpgrade(name: UpgradeKeys): boolean {
     return this.upgrades.includes(name)
   }
 }
