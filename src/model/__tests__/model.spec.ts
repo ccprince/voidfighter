@@ -15,7 +15,7 @@ describe('Defense stat', () => {
     { ship: Gunship(), expected: new Stat(Rating.D8) },
     { ship: Corvette(), expected: new Stat(Rating.D10) },
     {
-      ship: Corvette({ upgrades: ['Shields'] }),
+      ship: Corvette({ upgradesBase: ['Shields'] }),
       expected: new Stat(Rating.D10, 1),
     },
   ])('$ship.shipType -> $expected', ({ ship, expected }) => {
@@ -53,7 +53,7 @@ describe('Weapons', () => {
         { firepower: Rating.D10, arc: WeaponArc.Front },
         { firepower: Rating.D10, arc: WeaponArc.Rear },
       ],
-      upgrades: ['Targeting Computer'],
+      upgradesBase: ['Targeting Computer'],
     })
     expect(ship.weapons).toEqual([
       new Weapon(new Stat(Rating.D10, 1), WeaponArc.Front),
