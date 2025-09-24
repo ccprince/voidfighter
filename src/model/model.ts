@@ -1,32 +1,32 @@
 export enum ShipType {
-  Snubfighter = "SNUBFIGHTER",
-  Gunship = "GUNSHIP",
-  Corvette = "CORVETTE",
+  Snubfighter = 'SNUBFIGHTER',
+  Gunship = 'GUNSHIP',
+  Corvette = 'CORVETTE',
 }
 
 export class Weapon {
   constructor(
     public readonly firepower: Stat,
     public readonly arc: WeaponArc
-  ) { }
+  ) {}
 }
 
 export type WeaponBase = {
-  firepower: Rating,
-  arc: WeaponArc,
+  firepower: Rating
+  arc: WeaponArc
 }
 
 export enum WeaponArc {
-  Front = "FRONT",
-  Rear = "REAR",
-  Turret = "TURRET",
-  EnhancedTurret = "ENHANCED_TURRET",
+  Front = 'FRONT',
+  Rear = 'REAR',
+  Turret = 'TURRET',
+  EnhancedTurret = 'ENHANCED_TURRET',
 }
 
 export enum Rarity {
-  Common = "COMMON",
-  Uncommon = "UNCOMMON",
-  Rare = "RARE",
+  Common = 'COMMON',
+  Uncommon = 'UNCOMMON',
+  Rare = 'RARE',
 }
 
 export class Upgrade {
@@ -35,51 +35,135 @@ export class Upgrade {
     public readonly classes: ShipType[],
     public readonly rarity: Rarity,
     public readonly cost: number = 1,
-    public readonly slots: number = 1,
-  ) { }
+    public readonly slots: number = 1
+  ) {}
 }
 
 const UPGRADES = {
-  "Agile": new Upgrade("Agile", [ShipType.Snubfighter, ShipType.Gunship], Rarity.Common),
-  "Carrier": new Upgrade("Carrier", [ShipType.Gunship, ShipType.Corvette], Rarity.Rare),
-  "Death Flower": new Upgrade("Death Flower", [ShipType.Snubfighter, ShipType.Gunship], Rarity.Rare),
-  "Decoy": new Upgrade("Decoy", [ShipType.Gunship, ShipType.Corvette], Rarity.Uncommon),
-  "ECM": new Upgrade("ECM", [ShipType.Gunship, ShipType.Corvette], Rarity.Uncommon),
-  "Emergency Teleporter": new Upgrade("Emergency Teleporter", [ShipType.Snubfighter, ShipType.Gunship], Rarity.Rare),
-  "Enhanced Turret": new Upgrade("Enhanced Turret", [ShipType.Gunship, ShipType.Corvette], Rarity.Uncommon),
-  "Fast": new Upgrade("Fast", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Fully Loaded": new Upgrade("Fully Loaded", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Ground Support": new Upgrade("Ground Support", [ShipType.Gunship], Rarity.Uncommon),
-  "Hard Point": new Upgrade("Hard Point", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Maneuverable": new Upgrade("Maneuverable", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Mining Charges": new Upgrade("Mining Charges", [ShipType.Gunship, ShipType.Corvette], Rarity.Rare),
-  "Reinforced Hull": new Upgrade("Reinforced Hull", [ShipType.Corvette], Rarity.Rare),
-  "Repair": new Upgrade("Repair", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Shields": new Upgrade("Shields", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Stealth": new Upgrade("Stealth", [ShipType.Snubfighter, ShipType.Gunship], Rarity.Uncommon),
-  "Tailgunner": new Upgrade("Tailgunner", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Targeting Computer": new Upgrade("Targeting Computer", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Torpedoes": new Upgrade("Torpedoes", [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette], Rarity.Common),
-  "Tractor Beam": new Upgrade("Tractor Beam", [ShipType.Corvette], Rarity.Rare, 0),
-  "Transport": new Upgrade("Transport", [ShipType.Gunship], Rarity.Uncommon, 0),
+  Agile: new Upgrade(
+    'Agile',
+    [ShipType.Snubfighter, ShipType.Gunship],
+    Rarity.Common
+  ),
+  Carrier: new Upgrade(
+    'Carrier',
+    [ShipType.Gunship, ShipType.Corvette],
+    Rarity.Rare
+  ),
+  'Death Flower': new Upgrade(
+    'Death Flower',
+    [ShipType.Snubfighter, ShipType.Gunship],
+    Rarity.Rare
+  ),
+  Decoy: new Upgrade(
+    'Decoy',
+    [ShipType.Gunship, ShipType.Corvette],
+    Rarity.Uncommon
+  ),
+  ECM: new Upgrade(
+    'ECM',
+    [ShipType.Gunship, ShipType.Corvette],
+    Rarity.Uncommon
+  ),
+  'Emergency Teleporter': new Upgrade(
+    'Emergency Teleporter',
+    [ShipType.Snubfighter, ShipType.Gunship],
+    Rarity.Rare
+  ),
+  'Enhanced Turret': new Upgrade(
+    'Enhanced Turret',
+    [ShipType.Gunship, ShipType.Corvette],
+    Rarity.Uncommon
+  ),
+  Fast: new Upgrade(
+    'Fast',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  'Fully Loaded': new Upgrade(
+    'Fully Loaded',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  'Ground Support': new Upgrade(
+    'Ground Support',
+    [ShipType.Gunship],
+    Rarity.Uncommon
+  ),
+  'Hard Point': new Upgrade(
+    'Hard Point',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  Maneuverable: new Upgrade(
+    'Maneuverable',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  'Mining Charges': new Upgrade(
+    'Mining Charges',
+    [ShipType.Gunship, ShipType.Corvette],
+    Rarity.Rare
+  ),
+  'Reinforced Hull': new Upgrade(
+    'Reinforced Hull',
+    [ShipType.Corvette],
+    Rarity.Rare
+  ),
+  Repair: new Upgrade(
+    'Repair',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  Shields: new Upgrade(
+    'Shields',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  Stealth: new Upgrade(
+    'Stealth',
+    [ShipType.Snubfighter, ShipType.Gunship],
+    Rarity.Uncommon
+  ),
+  Tailgunner: new Upgrade(
+    'Tailgunner',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  'Targeting Computer': new Upgrade(
+    'Targeting Computer',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  Torpedoes: new Upgrade(
+    'Torpedoes',
+    [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
+    Rarity.Common
+  ),
+  'Tractor Beam': new Upgrade(
+    'Tractor Beam',
+    [ShipType.Corvette],
+    Rarity.Rare,
+    0
+  ),
+  Transport: new Upgrade('Transport', [ShipType.Gunship], Rarity.Uncommon, 0),
 }
 type UpgradesType = typeof UPGRADES
 type UpgradeKeys = keyof UpgradesType
 
-
 export enum Rating {
-  D4 = "2d4",
-  D6 = "2d6",
-  D8 = "2d8",
-  D10 = "2d10",
-  D12 = "2d12",
+  D4 = '2d4',
+  D6 = '2d6',
+  D8 = '2d8',
+  D10 = '2d10',
+  D12 = '2d12',
 }
 
 export class Stat {
   constructor(
     public readonly rating: Rating,
     public readonly modifier: number = 0
-  ) { }
+  ) {}
 
   toString(): string {
     let s = this.rating.toString()
@@ -101,7 +185,7 @@ export class Ship {
     protected weaponsBase: WeaponBase[] = [],
     protected pilotBase: Rating | null = null,
     protected upgradesBase: UpgradeKeys[] = []
-  ) { }
+  ) {}
 
   get defense(): Stat {
     return new Stat(this.defenseBase, this.hasUpgrade('Shields') ? 1 : 0)
@@ -109,7 +193,9 @@ export class Ship {
 
   get weapons(): Weapon[] {
     const modifier = this.hasUpgrade('Targeting Computer') ? 1 : 0
-    return this.weaponsBase.map(b => new Weapon(new Stat(b.firepower, modifier), b.arc))
+    return this.weaponsBase.map(
+      (b) => new Weapon(new Stat(b.firepower, modifier), b.arc)
+    )
   }
 
   protected hasUpgrade(name: UpgradeKeys): boolean {
@@ -118,37 +204,77 @@ export class Ship {
 }
 
 type SnubfighterOptions = {
-  name?: string,
-  speed?: number,
-  weaponsBase?: WeaponBase[],
-  pilot?: Rating | null,
-  upgradesBase?: UpgradeKeys[],
+  name?: string
+  speed?: number
+  weaponsBase?: WeaponBase[]
+  pilot?: Rating | null
+  upgradesBase?: UpgradeKeys[]
 }
 
-export function Snubfighter({ name = "Snubfighter", speed = 2, weaponsBase = [], pilot = null, upgradesBase = [] }: SnubfighterOptions = {}) {
-  return new Ship(name, ShipType.Snubfighter, speed, Rating.D6, weaponsBase, pilot, upgradesBase)
+export function Snubfighter({
+  name = 'Snubfighter',
+  speed = 2,
+  weaponsBase = [],
+  pilot = null,
+  upgradesBase = [],
+}: SnubfighterOptions = {}) {
+  return new Ship(
+    name,
+    ShipType.Snubfighter,
+    speed,
+    Rating.D6,
+    weaponsBase,
+    pilot,
+    upgradesBase
+  )
 }
-
 
 type GunshipOptions = {
-  name?: string,
-  speed?: number,
-  weaponsBase?: WeaponBase[],
-  pilot?: Rating | null,
-  upgradesBase?: UpgradeKeys[],
+  name?: string
+  speed?: number
+  weaponsBase?: WeaponBase[]
+  pilot?: Rating | null
+  upgradesBase?: UpgradeKeys[]
 }
 
-export function Gunship({ name = "Gunship", speed = 1, weaponsBase = [], pilot = null, upgradesBase = [] }: GunshipOptions = {}) {
-  return new Ship(name, ShipType.Gunship, speed, Rating.D8, weaponsBase, pilot, upgradesBase)
+export function Gunship({
+  name = 'Gunship',
+  speed = 1,
+  weaponsBase = [],
+  pilot = null,
+  upgradesBase = [],
+}: GunshipOptions = {}) {
+  return new Ship(
+    name,
+    ShipType.Gunship,
+    speed,
+    Rating.D8,
+    weaponsBase,
+    pilot,
+    upgradesBase
+  )
 }
 
 type CorvetteOptions = {
-  name?: string,
-  weaponsBase?: WeaponBase[],
-  pilot?: Rating | null,
-  upgradesBase?: UpgradeKeys[],
+  name?: string
+  weaponsBase?: WeaponBase[]
+  pilot?: Rating | null
+  upgradesBase?: UpgradeKeys[]
 }
 
-export function Corvette({ name = "Corvette", weaponsBase = [], pilot = null, upgradesBase = [] }: CorvetteOptions = {}): Ship {
-  return new Ship(name, ShipType.Corvette, 1, Rating.D10, weaponsBase, pilot, upgradesBase)
+export function Corvette({
+  name = 'Corvette',
+  weaponsBase = [],
+  pilot = null,
+  upgradesBase = [],
+}: CorvetteOptions = {}): Ship {
+  return new Ship(
+    name,
+    ShipType.Corvette,
+    1,
+    Rating.D10,
+    weaponsBase,
+    pilot,
+    upgradesBase
+  )
 }
