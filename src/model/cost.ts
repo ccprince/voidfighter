@@ -1,10 +1,18 @@
-import { Rating, Ship, Weapon, WeaponArc } from './model.ts'
+import {
+  Rating,
+  Ship,
+  UPGRADES,
+  Weapon,
+  WeaponArc,
+  type UpgradeKeys,
+} from './model.ts'
 
 export function costWithoutPilot(ship: Ship): number {
   return (
     speedCost(ship.speed) +
     defenseCost(ship.defense.rating) +
-    weaponsCost(ship.weapons)
+    weaponsCost(ship.weapons) +
+    upgradesCost(ship.upgrades)
   )
 }
 function speedCost(speed: number): number {
@@ -30,4 +38,11 @@ function weaponsCost(weapons: Weapon[]): number {
     return cost
   }
   return weapons.reduce((acc, w) => acc + cost(w), 0)
+}
+
+function upgradesCost(upgrades: UpgradeKeys[]): number {
+  return upgrades.reduce(
+    (acc: number, key: UpgradeKeys) => acc + UPGRADES[key].cost,
+    0
+  )
 }

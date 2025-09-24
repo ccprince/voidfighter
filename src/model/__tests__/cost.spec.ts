@@ -65,3 +65,19 @@ describe('Cost with weapons', () => {
     expect(costWithoutPilot(ship)).toEqual(expected)
   })
 })
+
+describe('Cost with upgrades', () => {
+  it.each([
+    { ship: Corvette({ upgrades: ['Shields'] }), cost: 10 },
+    { ship: Corvette({ upgrades: ['Shields', 'Maneuverable'] }), cost: 11 },
+    {
+      ship: Corvette({
+        upgrades: ['Shields', 'Maneuverable', 'Tractor Beam', 'Transport'],
+      }),
+      cost: 11,
+    },
+    { ship: Corvette({ upgrades: ['Tractor Beam', 'Transport'] }), cost: 9 },
+  ])('$ship -> $cost', ({ ship, cost }) => {
+    expect(costWithoutPilot(ship)).toEqual(cost)
+  })
+})

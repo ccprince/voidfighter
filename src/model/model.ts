@@ -39,7 +39,7 @@ export class Upgrade {
   ) {}
 }
 
-const UPGRADES = {
+export const UPGRADES = {
   Agile: new Upgrade(
     'Agile',
     [ShipType.Snubfighter, ShipType.Gunship],
@@ -83,7 +83,9 @@ const UPGRADES = {
   'Fully Loaded': new Upgrade(
     'Fully Loaded',
     [ShipType.Snubfighter, ShipType.Gunship, ShipType.Corvette],
-    Rarity.Common
+    Rarity.Common,
+    1,
+    0
   ),
   'Ground Support': new Upgrade(
     'Ground Support',
@@ -149,7 +151,7 @@ const UPGRADES = {
   Transport: new Upgrade('Transport', [ShipType.Gunship], Rarity.Uncommon, 0),
 }
 type UpgradesType = typeof UPGRADES
-type UpgradeKeys = keyof UpgradesType
+export type UpgradeKeys = keyof UpgradesType
 
 export enum Rating {
   D4 = '2d4',
@@ -184,7 +186,7 @@ export class Ship {
     protected readonly defenseBase: Rating,
     protected weaponsBase: WeaponBase[] = [],
     protected pilotBase: Rating | null = null,
-    protected upgradesBase: UpgradeKeys[] = []
+    public upgrades: UpgradeKeys[] = []
   ) {}
 
   get defense(): Stat {
@@ -199,7 +201,7 @@ export class Ship {
   }
 
   protected hasUpgrade(name: UpgradeKeys): boolean {
-    return this.upgradesBase.includes(name)
+    return this.upgrades.includes(name)
   }
 }
 
@@ -208,7 +210,7 @@ type SnubfighterOptions = {
   speed?: number
   weaponsBase?: WeaponBase[]
   pilot?: Rating | null
-  upgradesBase?: UpgradeKeys[]
+  upgrades?: UpgradeKeys[]
 }
 
 export function Snubfighter({
@@ -216,7 +218,7 @@ export function Snubfighter({
   speed = 2,
   weaponsBase = [],
   pilot = null,
-  upgradesBase = [],
+  upgrades = [],
 }: SnubfighterOptions = {}) {
   return new Ship(
     name,
@@ -225,7 +227,7 @@ export function Snubfighter({
     Rating.D6,
     weaponsBase,
     pilot,
-    upgradesBase
+    upgrades
   )
 }
 
@@ -234,7 +236,7 @@ type GunshipOptions = {
   speed?: number
   weaponsBase?: WeaponBase[]
   pilot?: Rating | null
-  upgradesBase?: UpgradeKeys[]
+  upgrades?: UpgradeKeys[]
 }
 
 export function Gunship({
@@ -242,7 +244,7 @@ export function Gunship({
   speed = 1,
   weaponsBase = [],
   pilot = null,
-  upgradesBase = [],
+  upgrades = [],
 }: GunshipOptions = {}) {
   return new Ship(
     name,
@@ -251,7 +253,7 @@ export function Gunship({
     Rating.D8,
     weaponsBase,
     pilot,
-    upgradesBase
+    upgrades
   )
 }
 
@@ -259,14 +261,14 @@ type CorvetteOptions = {
   name?: string
   weaponsBase?: WeaponBase[]
   pilot?: Rating | null
-  upgradesBase?: UpgradeKeys[]
+  upgrades?: UpgradeKeys[]
 }
 
 export function Corvette({
   name = 'Corvette',
   weaponsBase = [],
   pilot = null,
-  upgradesBase = [],
+  upgrades = [],
 }: CorvetteOptions = {}): Ship {
   return new Ship(
     name,
@@ -275,6 +277,6 @@ export function Corvette({
     Rating.D10,
     weaponsBase,
     pilot,
-    upgradesBase
+    upgrades
   )
 }
