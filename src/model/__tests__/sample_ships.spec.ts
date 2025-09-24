@@ -1,5 +1,5 @@
-import { describe, expect, it, test } from 'vitest'
-import { costWithoutPilot } from '../cost'
+import { describe, expect, it } from 'vitest'
+import { costWithoutPilot, costWithPilot } from '../cost'
 import {
   Corvette,
   Gunship,
@@ -27,7 +27,7 @@ const LightningChaser = Snubfighter({
     { firepower: Rating.D6, arc: WeaponArc.Front },
     { firepower: Rating.D6, arc: WeaponArc.Turret },
   ],
-  upgrades: ['Death Flower'],
+  upgrades: ['Death Flower', 'Fast', 'Stealth'],
 })
 
 describe('Shipbuilding example', () => {
@@ -37,12 +37,12 @@ describe('Shipbuilding example', () => {
     })
   })
 
-  test.skip('calculates cost correctly', () => {
+  describe('calculates cost correctly', () => {
     it.each([{ ship: LightningChaser, cost: 14 }])(
       '$ship.name -> $cost',
       ({ ship, cost }) => {
         expect(costWithoutPilot(ship)).toEqual(cost)
-        // expect(costWithPilot(ship)).toEqual(cost)
+        expect(costWithPilot(ship)).toEqual(cost)
       }
     )
   })
@@ -59,7 +59,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
       speed: 2,
       weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
       upgrades: ['Repair', 'Shields', 'Torpedoes'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
@@ -70,7 +70,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
       speed: 2,
       weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
       upgrades: ['Fast', 'Repair', 'Shields'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
@@ -84,7 +84,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
         { firepower: Rating.D6, arc: WeaponArc.Turret },
       ],
       upgrades: ['Repair', 'Shields', 'Torpedoes'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
@@ -92,10 +92,10 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
   {
     ship: Snubfighter({
       name: 'Phoenix',
-      speed: 2,
+      speed: 3,
       weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
       upgrades: ['Agile', 'Fast', 'Shields'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
@@ -106,7 +106,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
       speed: 2,
       weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
       upgrades: ['Targeting Computer'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
@@ -117,7 +117,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
       speed: 2,
       weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
       upgrades: ['Ground Support', 'Transport'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
@@ -135,20 +135,21 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
         'Fully Loaded',
         'Shields',
       ],
-      pilot: Rating.D10,
+      pilotBase: Rating.D10,
     }),
-    costWithoutPilot: 18,
-    costWithPilot: 23,
+    costWithoutPilot: 19, // Book says 18
+    costWithPilot: 24, // Book says 23
   },
   {
     ship: Corvette({
       name: 'Auroch',
       weaponsBase: [
-        { firepower: Rating.D10, arc: WeaponArc.Turret },
+        { firepower: Rating.D10, arc: WeaponArc.EnhancedTurret },
         { firepower: Rating.D8, arc: WeaponArc.Turret },
         { firepower: Rating.D8, arc: WeaponArc.Turret },
       ],
-      pilot: Rating.D8,
+      upgrades: ['Fast', 'Enhanced Turret', 'Repair', 'Shields'],
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 27,
     costWithPilot: 30,
@@ -162,7 +163,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
         { firepower: Rating.D8, arc: WeaponArc.Turret },
       ],
       upgrades: ['Fast', 'Reinforced Hull', 'Repair', 'Shields'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 27,
     costWithPilot: 30,
@@ -176,12 +177,12 @@ describe('Ships of the Void Tigers', () => {
     })
   })
 
-  test.skip('calculates cost correctly', () => {
+  describe('calculates cost correctly', () => {
     it.each(ShipsOfTheVoidTigers)(
       '$ship.name -> $costWithoutPilot ($costWithPilot)',
       ({ ship, costWithoutPilot: baseCost, costWithPilot: fullCost }) => {
         expect(costWithoutPilot(ship)).toEqual(baseCost)
-        // expect(costWithPilot(ship)).toEqual(fullCost)
+        expect(costWithPilot(ship)).toEqual(fullCost)
       }
     )
   })
@@ -198,7 +199,7 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
       speed: 2,
       weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
       upgrades: ['Agile', 'Maneuverable'],
-      pilot: Rating.D6,
+      pilotBase: Rating.D6,
     }),
     costWithoutPilot: 9,
     costWithPilot: 10,
@@ -209,7 +210,7 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
       speed: 2,
       weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
       upgrades: ['Targeting Computer', 'Torpedoes'],
-      pilot: Rating.D6,
+      pilotBase: Rating.D6,
     }),
     costWithoutPilot: 9,
     costWithPilot: 10,
@@ -220,7 +221,7 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
       speed: 3,
       weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
       upgrades: ['Agile', 'Maneuverable'],
-      pilot: Rating.D6,
+      pilotBase: Rating.D6,
     }),
     costWithoutPilot: 13,
     costWithPilot: 14,
@@ -231,7 +232,7 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
       speed: 3,
       weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
       upgrades: ['Agile', 'Maneuverable', 'Shields'],
-      pilot: Rating.D10,
+      pilotBase: Rating.D10,
     }),
     costWithoutPilot: 14,
     costWithPilot: 19,
@@ -242,7 +243,7 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
       speed: 2,
       weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
       upgrades: ['Shields', 'Targeting Computer', 'Torpedoes', 'Transport'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 14,
     costWithPilot: 17,
@@ -253,7 +254,7 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
       speed: 2,
       weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
       upgrades: ['Decoy', 'ECM', 'Shields', 'Transport'],
-      pilot: Rating.D8,
+      pilotBase: Rating.D8,
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
@@ -267,7 +268,7 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
         { firepower: Rating.D10, arc: WeaponArc.Turret },
       ],
       upgrades: ['Carrier', 'Shields', 'Torpedoes', 'Tractor Beam'],
-      pilot: Rating.D6,
+      pilotBase: Rating.D6,
     }),
     costWithoutPilot: 30,
     costWithPilot: 31,
@@ -281,12 +282,12 @@ describe('Ships of the Centauran Empire', () => {
     })
   })
 
-  test.skip('calculates cost correctly', () => {
+  describe('calculates cost correctly', () => {
     it.each(ShipsOfTheCentauranEmpire)(
       '$ship.name -> $costWithoutPilot ($costWithPilot)',
       ({ ship, costWithoutPilot: baseCost, costWithPilot: fullCost }) => {
         expect(costWithoutPilot(ship)).toEqual(baseCost)
-        // expect(costWithPilot(ship)).toEqual(fullCost)
+        expect(costWithPilot(ship)).toEqual(fullCost)
       }
     )
   })

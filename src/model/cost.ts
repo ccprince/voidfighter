@@ -1,11 +1,4 @@
-import {
-  Rating,
-  Ship,
-  UPGRADES,
-  Weapon,
-  WeaponArc,
-  type UpgradeKeys,
-} from './model.ts'
+import { Rating, Ship, UPGRADES, Weapon, type UpgradeKeys } from './model.ts'
 
 export function costWithoutPilot(ship: Ship): number {
   return (
@@ -31,7 +24,7 @@ function defenseCost(defense: Rating): number {
 
 function weaponsCost(weapons: Weapon[]): number {
   function cost(w: Weapon): number {
-    let cost = w.arc === WeaponArc.EnhancedTurret ? 1 : 0
+    let cost = 0
     if (w.firepower.rating === Rating.D6) cost += 2
     else if (w.firepower.rating === Rating.D8) cost += 4
     else cost += 6

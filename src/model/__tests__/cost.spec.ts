@@ -46,6 +46,7 @@ describe('Cost with weapons', () => {
       Gunship({
         speed: 1,
         weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.EnhancedTurret }],
+        upgrades: ['Enhanced Turret'],
       }),
       10,
     ],
@@ -56,6 +57,7 @@ describe('Cost with weapons', () => {
           { firepower: Rating.D8, arc: WeaponArc.Rear },
           { firepower: Rating.D8, arc: WeaponArc.EnhancedTurret },
         ],
+        upgrades: ['Enhanced Turret'],
       }),
       24,
     ],
