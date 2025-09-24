@@ -293,10 +293,125 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
 
 doShipTest('Ships of the Centauran Empire', ShipsOfTheCentauranEmpire)
 
+//
+// Ships of the Consolidated Federation
+//
+
+const ShipsofTheConsolidatedFederation: SampleCase[] = [
+  {
+    ship: Snubfighter({
+      name: 'Rapier',
+      speed: 2,
+      weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+      pilotBase: Rating.D8,
+      upgrades: ['Fast', 'Maneuverable', 'Repair', 'Shields', 'Torpedoes'],
+    }),
+    costWithoutPilot: 12,
+    costWithPilot: 15,
+    printable:
+      'Rapier (snubfighter) 12 (15):2:2d6+1:2d6:2d8:Fast,Maneuverable,Repair,Shields,Torpedoes',
+  },
+  {
+    ship: Snubfighter({
+      name: 'Longsword',
+      speed: 2,
+      weaponsBase: [
+        { firepower: Rating.D8, arc: WeaponArc.Front },
+        { firepower: Rating.D6, arc: WeaponArc.Rear },
+      ],
+      pilotBase: Rating.D8,
+      upgrades: ['Repair', 'Shields', 'Tailgunner', 'Torpedoes'],
+    }),
+    costWithoutPilot: 15,
+    costWithPilot: 18,
+    printable:
+      'Longsword (snubfighter) 15 (18):2:2d6+1:2d8,2d6R:2d8:Repair,Shields,Tailgunner,Torpedoes',
+  },
+  {
+    ship: Snubfighter({
+      name: 'Star Saber',
+      speed: 3,
+      weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
+      pilotBase: Rating.D10,
+      upgrades: ['Agile', 'Maneuverable', 'Repair', 'Shields'],
+    }),
+    costWithoutPilot: 15,
+    costWithPilot: 20,
+    printable:
+      'Star Saber (snubfighter) 15 (20):3:2d6+1:2d8:2d10+1:Agile,Maneuverable,Repair,Shields',
+  },
+  {
+    ship: Snubfighter({
+      name: 'Dagger Drone',
+      speed: 2,
+      weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+      pilotBase: Rating.D6,
+      upgrades: ['Agile', 'Maneuverable', 'Targeting Computer'],
+    }),
+    costWithoutPilot: 10,
+    costWithPilot: 11,
+    printable:
+      'Dagger Drone (snubfighter) 10 (11):2:2d6:2d6+1:2d6+1:Agile,Maneuverable,Targeting Computer',
+  },
+  {
+    ship: Gunship({
+      name: 'Claymore',
+      speed: 2,
+      weaponsBase: [
+        { firepower: Rating.D10, arc: WeaponArc.Front },
+        { firepower: Rating.D6, arc: WeaponArc.Turret },
+        { firepower: Rating.D6, arc: WeaponArc.Turret },
+      ],
+      pilotBase: Rating.D8,
+      upgrades: [
+        'Ground Support',
+        'Hard Point',
+        'Shields',
+        'Torpedoes',
+        'Transport',
+      ],
+    }),
+    costWithoutPilot: 21,
+    costWithPilot: 24,
+    printable:
+      'Claymore (gunship) 21 (24):2:2d8+1:2d10,2d6T,2d6T:2d8:Ground Support,Hard Point,Shields,Torpedoes,Transport',
+  },
+  {
+    ship: Corvette({
+      name: 'Destrier',
+      weaponsBase: [
+        { firepower: Rating.D10, arc: WeaponArc.Turret },
+        { firepower: Rating.D10, arc: WeaponArc.Turret },
+        { firepower: Rating.D8, arc: WeaponArc.EnhancedTurret },
+        { firepower: Rating.D8, arc: WeaponArc.EnhancedTurret },
+      ],
+      pilotBase: Rating.D6,
+      upgrades: ['Enhanced Turret', 'Enhanced Turret', 'Hard Point', 'Shields'],
+    }),
+    costWithoutPilot: 33,
+    costWithPilot: 34,
+    printable:
+      'Destrier (corvette) 33 (34):1:2d10+1:2d10T,2d10T,2d8E,2d8E:2d6:Enhanced Turret,Enhanced Turret,Hard Point,Shields',
+  },
+]
+
+//
+// Ignore this for now, because they all use the "High Tech" squadron trait, and that is not yet
+// covered in the validations.
+//
+// doShipTest(
+//   'Ships of the Consolidated Federation',
+//   ShipsofTheConsolidatedFederation
+// )
+
+//
+// Implementation
+//
+
 function doShipTest(name: string, cases: SampleCase[]) {
   describe(name, () => {
     describe('validates cleanly', () => {
-      it.each(ShipsOfTheCentauranEmpire)('$ship.name', ({ ship }) => {
+      it.each(cases)('$ship.name', ({ ship }) => {
         expect(validateShip(ship)).toEqual([])
       })
     })
