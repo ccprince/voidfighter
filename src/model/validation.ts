@@ -10,34 +10,28 @@ export function validateShip(ship: Ship): string[] {
   ].filter((x) => x !== null)
 }
 
-function validateSpeed(ship: Ship): string | null {
-  const min = ship.shipType == ShipType.Snubfighter ? 2 : 1
-  let max: number
-  if (ship.shipType === ShipType.Corvette) max = 1
-  else if (ship.shipType === ShipType.Gunship) max = 2
-  else max = 3
+const SPEED_LIMITS = {
+  [ShipType.Snubfighter]: [2, 3] as const,
+  [ShipType.Gunship]: [1, 2] as const,
+  [ShipType.Corvette]: [1, 1] as const,
+}
 
+function validateSpeed(ship: Ship): string | null {
+  const [min, max] = SPEED_LIMITS[ship.shipType]
   return ship.speed >= min && ship.speed <= max
     ? null
     : `Speed is ${ship.speed}, but must be between ${min} and ${max}`
 }
 
+const LEGAL_DEFENSE = {
+  [ShipType.Snubfighter]: Rating.D6 as const,
+  [ShipType.Gunship]: Rating.D8 as const,
+  [ShipType.Corvette]: Rating.D10 as const,
+}
+
 function validateDefense(ship: Ship): string | null {
-  if (
-    ship.shipType === ShipType.Snubfighter &&
-    ship.defense.rating !== Rating.D6
-  )
-    return `Defense is ${ship.defense.rating}, but defense for a Snubfighter must be 2d6`
-  else if (
-    ship.shipType === ShipType.Gunship &&
-    ship.defense.rating !== Rating.D8
-  )
-    return `Defense is ${ship.defense.rating}, but defense for a Gunship must be 2d8`
-  else if (
-    ship.shipType === ShipType.Corvette &&
-    ship.defense.rating !== Rating.D10
-  )
-    return `Defense is ${ship.defense.rating}, but defense for a Corvette must be 2d10`
+  if (ship.defense.rating !== LEGAL_DEFENSE[ship.shipType])
+    return `Defense is ${ship.defense.rating}, but defense for a ${formatShipType(ship.shipType)} must be ${LEGAL_DEFENSE[ship.shipType]}`
   else return null
 }
 
@@ -150,7 +144,7 @@ function validateUpgrades(ship: Ship): string[] {
   ship.upgrades.forEach((upgrade) => {
     if (!UPGRADES[upgrade].classes.includes(ship.shipType)) {
       results.push(
-        `${toCapital(ship.shipType)}s cannot have the ${upgrade} upgrade`
+        `${formatShipType(ship.shipType)}s cannot have the ${upgrade} upgrade`
       )
     }
   })
@@ -176,36 +170,33 @@ function validateUpgrades(ship: Ship): string[] {
   return results
 }
 
-function validateUpgradeCount(ship: Ship): string | null {
-  let max: number
-  switch (ship.shipType) {
-    case ShipType.Snubfighter:
-      max = 3
-      break
-    case ShipType.Gunship:
-      max = 4
-      break
-    case ShipType.Corvette:
-      max = 5
-      break
-  }
+const UPGRADE_LIMIT = {
+  [ShipType.Snubfighter]: 3,
+  [ShipType.Gunship]: 4,
+  [ShipType.Corvette]: 5,
+}
 
+function validateUpgradeCount(ship: Ship): string | null {
+  let max = UPGRADE_LIMIT[ship.shipType]
   let extraMessage = ''
   if (ship.hasUpgrade('Fully Loaded')) {
     max++
     extraMessage = ' with Fully Loaded'
   }
 
-  const upgradeCount = ship.upgrades.reduce(
+  const usedUpgradeSlots = ship.upgrades.reduce(
     (acc, u) => acc + UPGRADES[u].slots,
     0
   )
-  if (upgradeCount > max)
-    return `${toCapital(ship.shipType)}s${extraMessage} may have at most ${max} upgrades`
+  if (usedUpgradeSlots > max)
+    return `${formatShipType(ship.shipType)}s${extraMessage} may have at most ${max} upgrades`
 
   return null
 }
 
-function toCapital(s: string): string {
-  return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase()
+function formatShipType(t: ShipType): string {
+  return (
+    t.toString().substring(0, 1).toUpperCase() +
+    t.toString().substring(1).toLowerCase()
+  )
 }
