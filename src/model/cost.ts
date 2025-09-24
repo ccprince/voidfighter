@@ -1,7 +1,7 @@
-import { Rating, Ship } from './model.ts'
+import { Rating, Ship, Weapon, WeaponArc } from './model.ts'
 
 export function costWithoutPilot(ship: Ship): number {
-  return speedCost(ship.speed) + defenseCost(ship.defense.rating)
+  return speedCost(ship.speed) + defenseCost(ship.defense.rating) + weaponsCost(ship.weapons)
 }
 function speedCost(speed: number): number {
   if (speed == 1)
@@ -20,7 +20,21 @@ function defenseCost(defense: Rating): number {
   else if (defense == Rating.D8)
     return 4
   else if (defense == Rating.D10)
-    return 6
+    return 8
   else
     return 0
+}
+
+function weaponsCost(weapons: Weapon[]): number {
+  function cost(w: Weapon): number {
+    let cost = w.arc === WeaponArc.EnhancedTurret ? 1 : 0
+    if (w.firepower.rating === Rating.D6)
+      cost += 2
+    else if (w.firepower.rating === Rating.D8)
+      cost += 4
+    else
+      cost += 6
+    return cost
+  }
+  return weapons.reduce((acc, w) => acc + cost(w), 0)
 }
