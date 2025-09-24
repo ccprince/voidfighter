@@ -170,23 +170,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
   },
 ]
 
-describe('Ships of the Void Tigers', () => {
-  describe('validates cleanly', () => {
-    it.each(ShipsOfTheVoidTigers)('$ship.name', ({ ship }) => {
-      expect(validateShip(ship)).toEqual([])
-    })
-  })
-
-  describe('calculates cost correctly', () => {
-    it.each(ShipsOfTheVoidTigers)(
-      '$ship.name -> $costWithoutPilot ($costWithPilot)',
-      ({ ship, costWithoutPilot: baseCost, costWithPilot: fullCost }) => {
-        expect(costWithoutPilot(ship)).toEqual(baseCost)
-        expect(costWithPilot(ship)).toEqual(fullCost)
-      }
-    )
-  })
-})
+doShipTest('Ships of the Void Tigers', ShipsOfTheVoidTigers)
 
 //
 // Ships of the Centauran Empire
@@ -275,20 +259,24 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
   },
 ]
 
-describe('Ships of the Centauran Empire', () => {
-  describe('validates cleanly', () => {
-    it.each(ShipsOfTheCentauranEmpire)('$ship.name', ({ ship }) => {
-      expect(validateShip(ship)).toEqual([])
+doShipTest('Ships of the Centauran Empire', ShipsOfTheCentauranEmpire)
+
+function doShipTest(name: string, cases: SampleCase[]) {
+  describe(name, () => {
+    describe('validates cleanly', () => {
+      it.each(ShipsOfTheCentauranEmpire)('$ship.name', ({ ship }) => {
+        expect(validateShip(ship)).toEqual([])
+      })
+    })
+
+    describe('calculates cost correctly', () => {
+      it.each(cases)(
+        '$ship.name -> $costWithoutPilot ($costWithPilot)',
+        ({ ship, costWithoutPilot: baseCost, costWithPilot: fullCost }) => {
+          expect(costWithoutPilot(ship)).toEqual(baseCost)
+          expect(costWithPilot(ship)).toEqual(fullCost)
+        }
+      )
     })
   })
-
-  describe('calculates cost correctly', () => {
-    it.each(ShipsOfTheCentauranEmpire)(
-      '$ship.name -> $costWithoutPilot ($costWithPilot)',
-      ({ ship, costWithoutPilot: baseCost, costWithPilot: fullCost }) => {
-        expect(costWithoutPilot(ship)).toEqual(baseCost)
-        expect(costWithPilot(ship)).toEqual(fullCost)
-      }
-    )
-  })
-})
+}
