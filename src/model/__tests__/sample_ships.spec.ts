@@ -89,3 +89,60 @@ const Minotaur = Corvette({
   upgradesBase: ['Fast', 'Reinforced Hull', 'Repair', 'Shields'],
   pilot: Rating.D8,
 })
+
+//
+// Ships of the Centauran Empire
+//
+
+const YellowjacketSwarmfighter = Snubfighter({
+  name: 'Yellowjacket Swarmfighter',
+  speed: 2,
+  weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+  upgradesBase: ['Agile', 'Maneuverable'],
+  pilot: Rating.D6,
+})
+const HornetSwarmFighter = Snubfighter({
+  name: 'Hornet Swarmfighter',
+  speed: 2,
+  weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+  upgradesBase: ['Targeting Computer', 'Torpedoes'],
+  pilot: Rating.D6,
+})
+const WaspSwarmFighter = Snubfighter({
+  name: 'Wasp Swarmfighter',
+  speed: 3,
+  weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
+  upgradesBase: ['Agile', 'Maneuverable'],
+  pilot: Rating.D6,
+})
+const VespidAdvancedSwarmFighter = Snubfighter({
+  name: 'Vespid - Advanced Swarmfighter',
+  speed: 3,
+  weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
+  upgradesBase: ['Agile', 'Maneuverable', 'Shields'],
+  pilot: Rating.D10,
+})
+const FireBeetle = Gunship({
+  name: 'Fire Beetle',
+  speed: 2,
+  weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
+  upgradesBase: ['Shields', 'Targeting Computer', 'Torpedoes', 'Transport'],
+  pilot: Rating.D8,
+})
+const ScarabShuttle = Gunship({
+  name: 'Scarab Shuttle',
+  speed: 2,
+  weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+  upgradesBase: ['Decoy', 'ECM', 'Shields', 'Transport'],
+  pilot: Rating.D8,
+})
+const WetaWarship = Corvette({
+  name: 'Weta Warship',
+  weaponsBase: [
+    { firepower: Rating.D10, arc: WeaponArc.Front },
+    { firepower: Rating.D10, arc: WeaponArc.Turret },
+    { firepower: Rating.D10, arc: WeaponArc.Turret },
+  ],
+  upgradesBase: ['Carrier', 'Shields', 'Torpedoes', 'Tractor Beam'],
+  pilot: Rating.D6,
+})
