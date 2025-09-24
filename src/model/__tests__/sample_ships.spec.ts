@@ -8,12 +8,14 @@ import {
   Snubfighter,
   WeaponArc,
 } from '../model'
+import { printableVersion } from '../printable'
 import { validateShip } from '../validation'
 
 type SampleCase = {
   ship: Ship
   costWithoutPilot: number
   costWithPilot: number
+  printable: string
 }
 
 //
@@ -63,6 +65,8 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
+    printable:
+      'Hellhound A (snubfighter) 12 (15):2:2d6+1:2d8:2d8:Repair,Shields,Torpedoes',
   },
   {
     ship: Snubfighter({
@@ -74,6 +78,8 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
+    printable:
+      'Hellhound B (snubfighter) 12 (15):2:2d6+1:2d8:2d8:Fast,Repair,Shields',
   },
   {
     ship: Snubfighter({
@@ -88,6 +94,8 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
+    printable:
+      'Manticore (snubfighter) 12 (15):2:2d6+1:2d6,2d6T:2d8:Repair,Shields,Torpedoes',
   },
   {
     ship: Snubfighter({
@@ -99,6 +107,8 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
+    printable:
+      'Phoenix (snubfighter) 12 (15):3:2d6+1:2d6:2d8+1:Agile,Fast,Shields',
   },
   {
     ship: Gunship({
@@ -110,6 +120,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
+    printable: 'Gorgon (gunship) 12 (15):2:2d8:2d8+1:2d8:Targeting Computer',
   },
   {
     ship: Gunship({
@@ -121,6 +132,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
+    printable: 'Harpy (gunship) 12 (15):2:2d8:2d8:2d8:Ground Support,Transport',
   },
   {
     ship: Gunship({
@@ -139,6 +151,8 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 19, // Book says 18
     costWithPilot: 24, // Book says 23
+    printable:
+      'The Odyssey (gunship) 19 (24):2:2d8+1:2d10E:2d10:Death Flower,Decoy,Enhanced Turret,Fast,Fully Loaded,Shields',
   },
   {
     ship: Corvette({
@@ -153,6 +167,8 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 27,
     costWithPilot: 30,
+    printable:
+      'Auroch (corvette) 27 (30):1:2d10+1:2d10E,2d8T,2d8T:2d8:Fast,Enhanced Turret,Repair,Shields',
   },
   {
     ship: Corvette({
@@ -167,6 +183,8 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     }),
     costWithoutPilot: 27,
     costWithPilot: 30,
+    printable:
+      'Minotaur (corvette) 27 (30):1:2d10+1:2d10T,2d8T,2d8T:2d8:Fast,Reinforced Hull,Repair,Shields',
   },
 ]
 
@@ -187,6 +205,8 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
     }),
     costWithoutPilot: 9,
     costWithPilot: 10,
+    printable:
+      'Yellowjacket Swarmfighter (snubfighter) 9 (10):2:2d6:2d6:2d6+1:Agile,Maneuverable',
   },
   {
     ship: Snubfighter({
@@ -198,6 +218,8 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
     }),
     costWithoutPilot: 9,
     costWithPilot: 10,
+    printable:
+      'Hornet Swarmfighter (snubfighter) 9 (10):2:2d6:2d6+1:2d6:Targeting Computer,Torpedoes',
   },
   {
     ship: Snubfighter({
@@ -209,6 +231,8 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
     }),
     costWithoutPilot: 13,
     costWithPilot: 14,
+    printable:
+      'Wasp Swarmfighter (snubfighter) 13 (14):3:2d6:2d8:2d6+1:Agile,Maneuverable',
   },
   {
     ship: Snubfighter({
@@ -220,6 +244,8 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
     }),
     costWithoutPilot: 14,
     costWithPilot: 19,
+    printable:
+      'Vespid - Advanced Swarmfighter (snubfighter) 14 (19):3:2d6+1:2d8:2d10+1:Agile,Maneuverable,Shields',
   },
   {
     ship: Gunship({
@@ -231,6 +257,8 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
     }),
     costWithoutPilot: 14,
     costWithPilot: 17,
+    printable:
+      'Fire Beetle (gunship) 14 (17):2:2d8+1:2d8+1:2d8:Shields,Targeting Computer,Torpedoes,Transport',
   },
   {
     ship: Gunship({
@@ -242,6 +270,8 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
     }),
     costWithoutPilot: 12,
     costWithPilot: 15,
+    printable:
+      'Scarab Shuttle (gunship) 12 (15):2:2d8+1:2d6:2d8:Decoy,ECM,Shields,Transport',
   },
   {
     ship: Corvette({
@@ -256,6 +286,8 @@ const ShipsOfTheCentauranEmpire: SampleCase[] = [
     }),
     costWithoutPilot: 30,
     costWithPilot: 31,
+    printable:
+      'Weta Warship (corvette) 30 (31):1:2d10+1:2d10,2d10T,2d10T:2d6:Carrier,Shields,Torpedoes,Tractor Beam',
   },
 ]
 
@@ -277,6 +309,12 @@ function doShipTest(name: string, cases: SampleCase[]) {
           expect(costWithPilot(ship)).toEqual(fullCost)
         }
       )
+    })
+
+    describe('converts to printable', () => {
+      it.each(cases)('$ship.name -> $printable', ({ ship, printable }) => {
+        expect(printableVersion(ship)).toEqual(printable)
+      })
     })
   })
 }
