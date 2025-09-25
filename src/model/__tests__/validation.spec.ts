@@ -6,6 +6,7 @@ import {
   Ship,
   ShipType,
   Snubfighter,
+  SquadronTrait,
   WeaponArc,
 } from '../model.ts'
 import { validateShip } from '../validation.ts'
@@ -338,6 +339,7 @@ describe('Upgrades', () => {
     it.each([
       {
         ship: Snubfighter({
+          weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
           upgrades: ['Fast', 'Hard Point', 'Maneuverable', 'Repair'],
         }),
         expected: 'Snubfighters may have at most 3 upgrades',
@@ -362,7 +364,7 @@ describe('Upgrades', () => {
         expected: 'Corvettes may have at most 5 upgrades',
       },
     ])('$ship.shipType', ({ ship, expected }) => {
-      expect(validateShip(ship)).contains(expected)
+      expect(validateShip(ship)).toEqual([expected])
     })
   })
 
@@ -394,7 +396,27 @@ describe('Upgrades', () => {
         ],
       }),
     ])('$0', (ship) => {
-      expect(validateShip(ship)).toHaveLength(0)
+      expect(validateShip(ship)).toEqual([])
+    })
+  })
+
+  describe('can have extra upgrades with High Tech trait', () => {
+    it.each([
+      Snubfighter({
+        weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+        upgrades: ['Fast', 'Maneuverable', 'Repair', 'Shields'],
+        squadronTrait: SquadronTrait.HighTech,
+      }),
+      Gunship({
+        upgrades: ['Agile', 'Death Flower', 'Decoy', 'ECM', 'Repair'],
+        squadronTrait: SquadronTrait.HighTech,
+      }),
+      Corvette({
+        upgrades: ['Carrier', 'Decoy', 'ECM', 'Repair', 'Shields', 'Torpedoes'],
+        squadronTrait: SquadronTrait.HighTech,
+      }),
+    ])('$0', (ship) => {
+      expect(validateShip(ship)).toEqual([])
     })
   })
 
@@ -442,6 +464,65 @@ describe('Upgrades', () => {
           ],
         }),
         message: 'Corvettes with Fully Loaded may have at most 6 upgrades',
+      },
+    ])('$ship.shipType', ({ ship, message }) => {
+      expect(validateShip(ship)).toEqual([message])
+    })
+  })
+
+  describe('are limited by ship type, Fully Loaded upgrade, and High Tech trait', () => {
+    it.each([
+      {
+        ship: Snubfighter({
+          weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+          upgrades: [
+            'Fully Loaded',
+            'Fast',
+            'Maneuverable',
+            'Repair',
+            'Shields',
+            'Torpedoes',
+            'Stealth',
+          ],
+          squadronTrait: SquadronTrait.HighTech,
+        }),
+        message:
+          'Snubfighters with Fully Loaded and High Tech may have at most 5 upgrades',
+      },
+      {
+        ship: Gunship({
+          upgrades: [
+            'Fully Loaded',
+            'Agile',
+            'Death Flower',
+            'Decoy',
+            'ECM',
+            'Repair',
+            'Targeting Computer',
+            'Torpedoes',
+          ],
+          squadronTrait: SquadronTrait.HighTech,
+        }),
+        message:
+          'Gunships with Fully Loaded and High Tech may have at most 6 upgrades',
+      },
+      {
+        ship: Corvette({
+          upgrades: [
+            'Fully Loaded',
+            'Carrier',
+            'Decoy',
+            'ECM',
+            'Repair',
+            'Shields',
+            'Torpedoes',
+            'Mining Charges',
+            'Maneuverable',
+          ],
+          squadronTrait: SquadronTrait.HighTech,
+        }),
+        message:
+          'Corvettes with Fully Loaded and High Tech may have at most 7 upgrades',
       },
     ])('$ship.shipType', ({ ship, message }) => {
       expect(validateShip(ship)).toEqual([message])
@@ -579,6 +660,19 @@ describe('Max cost', () => {
       ],
     },
     {
+      ship: Snubfighter({
+        speed: 3,
+        weaponsBase: [
+          { firepower: Rating.D8, arc: WeaponArc.Front },
+          { firepower: Rating.D6, arc: WeaponArc.Rear },
+        ],
+        upgrades: ['Fast', 'Tailgunner'],
+        pilotBase: Rating.D8,
+        squadronTrait: SquadronTrait.HighTech,
+      }),
+      expected: [],
+    },
+    {
       ship: Gunship({
         speed: 2,
         weaponsBase: [
@@ -605,6 +699,19 @@ describe('Max cost', () => {
       ],
     },
     {
+      ship: Gunship({
+        speed: 2,
+        weaponsBase: [
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+          { firepower: Rating.D8, arc: WeaponArc.Turret },
+        ],
+        upgrades: ['Fast', 'Shields', 'Decoy', 'ECM'],
+        pilotBase: Rating.D8,
+        squadronTrait: SquadronTrait.HighTech,
+      }),
+      expected: [],
+    },
+    {
       ship: Corvette({
         weaponsBase: [
           { firepower: Rating.D10, arc: WeaponArc.Front },
@@ -629,6 +736,19 @@ describe('Max cost', () => {
       expected: [
         "The ship's non-pilot cost (31) exceeds the maximum for a Corvette (30)",
       ],
+    },
+    {
+      ship: Corvette({
+        weaponsBase: [
+          { firepower: Rating.D10, arc: WeaponArc.Front },
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+          { firepower: Rating.D10, arc: WeaponArc.Turret },
+        ],
+        upgrades: ['Carrier', 'Decoy', 'ECM', 'Torpedoes'],
+        pilotBase: Rating.D8,
+        squadronTrait: SquadronTrait.HighTech,
+      }),
+      expected: [],
     },
   ])('$ship -> $expected', ({ ship, expected }) => {
     expect(validateShip(ship)).toEqual(expected)

@@ -6,6 +6,7 @@ import {
   Rating,
   Ship,
   Snubfighter,
+  SquadronTrait,
   WeaponArc,
 } from '../model'
 import { printableVersion } from '../printable'
@@ -298,19 +299,23 @@ doShipTest('Ships of the Centauran Empire', ShipsOfTheCentauranEmpire)
 //
 
 const ShipsofTheConsolidatedFederation: SampleCase[] = [
-  {
-    ship: Snubfighter({
-      name: 'Rapier',
-      speed: 2,
-      weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
-      pilotBase: Rating.D8,
-      upgrades: ['Fast', 'Maneuverable', 'Repair', 'Shields', 'Torpedoes'],
-    }),
-    costWithoutPilot: 12,
-    costWithPilot: 15,
-    printable:
-      'Rapier (snubfighter) 12 (15):2:2d6+1:2d6:2d8:Fast,Maneuverable,Repair,Shields,Torpedoes',
-  },
+  //
+  // This ship is illegal -- even with High Tech, it has one too many upgrades.
+  //
+  // {
+  //   ship: Snubfighter({
+  //     name: 'Rapier',
+  //     speed: 2,
+  //     weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+  //     pilotBase: Rating.D8,
+  //     upgrades: ['Fast', 'Maneuverable', 'Repair', 'Shields', 'Torpedoes'],
+  //     squadronTrait: SquadronTrait.HighTech,
+  //   }),
+  //   costWithoutPilot: 12,
+  //   costWithPilot: 15,
+  //   printable:
+  //     'Rapier (snubfighter) 12 (15):2:2d6+1:2d6:2d8:Fast,Maneuverable,Repair,Shields,Torpedoes',
+  // },
   {
     ship: Snubfighter({
       name: 'Longsword',
@@ -321,6 +326,7 @@ const ShipsofTheConsolidatedFederation: SampleCase[] = [
       ],
       pilotBase: Rating.D8,
       upgrades: ['Repair', 'Shields', 'Tailgunner', 'Torpedoes'],
+      squadronTrait: SquadronTrait.HighTech,
     }),
     costWithoutPilot: 15,
     costWithPilot: 18,
@@ -334,6 +340,7 @@ const ShipsofTheConsolidatedFederation: SampleCase[] = [
       weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
       pilotBase: Rating.D10,
       upgrades: ['Agile', 'Maneuverable', 'Repair', 'Shields'],
+      squadronTrait: SquadronTrait.HighTech,
     }),
     costWithoutPilot: 15,
     costWithPilot: 20,
@@ -347,6 +354,7 @@ const ShipsofTheConsolidatedFederation: SampleCase[] = [
       weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
       pilotBase: Rating.D6,
       upgrades: ['Agile', 'Maneuverable', 'Targeting Computer'],
+      squadronTrait: SquadronTrait.HighTech,
     }),
     costWithoutPilot: 10,
     costWithPilot: 11,
@@ -370,6 +378,7 @@ const ShipsofTheConsolidatedFederation: SampleCase[] = [
         'Torpedoes',
         'Transport',
       ],
+      squadronTrait: SquadronTrait.HighTech,
     }),
     costWithoutPilot: 21,
     costWithPilot: 24,
@@ -387,6 +396,7 @@ const ShipsofTheConsolidatedFederation: SampleCase[] = [
       ],
       pilotBase: Rating.D6,
       upgrades: ['Enhanced Turret', 'Enhanced Turret', 'Hard Point', 'Shields'],
+      squadronTrait: SquadronTrait.HighTech,
     }),
     costWithoutPilot: 33,
     costWithPilot: 34,
@@ -395,14 +405,10 @@ const ShipsofTheConsolidatedFederation: SampleCase[] = [
   },
 ]
 
-//
-// Ignore this for now, because they all use the "High Tech" squadron trait, and that is not yet
-// covered in the validations.
-//
-// doShipTest(
-//   'Ships of the Consolidated Federation',
-//   ShipsofTheConsolidatedFederation
-// )
+doShipTest(
+  'Ships of the Consolidated Federation',
+  ShipsofTheConsolidatedFederation
+)
 
 //
 // Implementation

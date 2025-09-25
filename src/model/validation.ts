@@ -1,5 +1,13 @@
 import { costWithoutPilot } from './cost.ts'
-import { Rating, Ship, ShipType, UPGRADES, Weapon, WeaponArc } from './model.ts'
+import {
+  Rating,
+  Ship,
+  ShipType,
+  SquadronTrait,
+  UPGRADES,
+  Weapon,
+  WeaponArc,
+} from './model.ts'
 
 export function validateShip(ship: Ship): string[] {
   return [
@@ -182,10 +190,16 @@ const UPGRADE_LIMIT = {
 function validateUpgradeCount(ship: Ship): string | null {
   let max = UPGRADE_LIMIT[ship.shipType]
   let extraMessage = ''
+  let extras: string[] = []
   if (ship.hasUpgrade('Fully Loaded')) {
     max++
-    extraMessage = ' with Fully Loaded'
+    extras.push('Fully Loaded')
   }
+  if (ship.squadronTrait === SquadronTrait.HighTech) {
+    max++
+    extras.push('High Tech')
+  }
+  if (extras.length > 0) extraMessage = ` with ${extras.join(' and ')}`
 
   const usedUpgradeSlots = ship.upgrades.reduce(
     (acc, u) => acc + UPGRADES[u].slots,
@@ -222,6 +236,8 @@ const MAX_COST = {
 }
 
 function validateCost(ship: Ship): string | null {
+  if (ship.squadronTrait === SquadronTrait.HighTech) return null
+
   const shipCost = costWithoutPilot(ship)
   return shipCost > MAX_COST[ship.shipType]
     ? `The ship's non-pilot cost (${shipCost}) exceeds the maximum for a ${formatShipType(ship.shipType)} (${MAX_COST[ship.shipType]})`

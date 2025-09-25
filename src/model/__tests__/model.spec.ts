@@ -4,6 +4,7 @@ import {
   Gunship,
   Rating,
   Snubfighter,
+  SquadronTrait,
   Stat,
   Weapon,
   WeaponArc,
@@ -18,6 +19,17 @@ describe('Defense stat', () => {
       ship: Corvette({ upgrades: ['Shields'] }),
       expected: new Stat(Rating.D10, 1),
     },
+    {
+      ship: Corvette({ squadronTrait: SquadronTrait.Rugged }),
+      expected: new Stat(Rating.D10, 1),
+    },
+    {
+      ship: Corvette({
+        squadronTrait: SquadronTrait.Rugged,
+        upgrades: ['Shields'],
+      }),
+      expected: new Stat(Rating.D10, 2),
+    },
   ])('$ship.shipType -> $expected', ({ ship, expected }) => {
     expect(ship.defense).toEqual(expected)
   })
@@ -31,6 +43,13 @@ describe('Pilot stat', () => {
       expected: new Stat(Rating.D8, 1),
     },
     { ship: Gunship(), expected: null },
+    {
+      ship: Gunship({
+        pilotBase: Rating.D8,
+        squadronTrait: SquadronTrait.Hotshots,
+      }),
+      expected: new Stat(Rating.D8, 1),
+    },
   ])('$ship -> $expected', ({ ship, expected }) => {
     expect(ship.pilot).toEqual(expected)
   })
@@ -71,6 +90,35 @@ describe('Weapons', () => {
     expect(ship.weapons).toEqual([
       new Weapon(new Stat(Rating.D10, 1), WeaponArc.Front),
       new Weapon(new Stat(Rating.D10, 1), WeaponArc.Rear),
+    ])
+  })
+
+  it('adds bonus for Berserker Intelligence trait', () => {
+    let ship = Corvette({
+      weaponsBase: [
+        { firepower: Rating.D10, arc: WeaponArc.Front },
+        { firepower: Rating.D10, arc: WeaponArc.Rear },
+      ],
+      squadronTrait: SquadronTrait.BersekerIntelligence,
+    })
+    expect(ship.weapons).toEqual([
+      new Weapon(new Stat(Rating.D10, 1), WeaponArc.Front),
+      new Weapon(new Stat(Rating.D10, 1), WeaponArc.Rear),
+    ])
+  })
+
+  it('adds both TC and BI bonuses', () => {
+    let ship = Corvette({
+      weaponsBase: [
+        { firepower: Rating.D10, arc: WeaponArc.Front },
+        { firepower: Rating.D10, arc: WeaponArc.Rear },
+      ],
+      upgrades: ['Targeting Computer'],
+      squadronTrait: SquadronTrait.BersekerIntelligence,
+    })
+    expect(ship.weapons).toEqual([
+      new Weapon(new Stat(Rating.D10, 2), WeaponArc.Front),
+      new Weapon(new Stat(Rating.D10, 2), WeaponArc.Rear),
     ])
   })
 })

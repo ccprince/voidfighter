@@ -178,6 +178,18 @@ export class Stat {
   }
 }
 
+export enum SquadronTrait {
+  BersekerIntelligence = 'Berserker Intelligence',
+  Bioships = 'Bioships',
+  HighTech = 'High Tech',
+  Hotshots = 'Hotshots',
+  ImperialNumbers = 'Imperial Numbers',
+  RedundantSystems = 'Redundant System',
+  Rugged = 'Rugged',
+  Ruthless = 'Ruthless',
+  ScrappyUnderdogs = 'Scrappy Underdogs',
+}
+
 export class Ship {
   constructor(
     public name: string,
@@ -186,23 +198,34 @@ export class Ship {
     protected readonly defenseBase: Rating,
     protected weaponsBase: WeaponBase[] = [],
     protected pilotBase: Rating | null = null,
-    public upgrades: UpgradeKeys[] = []
+    public upgrades: UpgradeKeys[] = [],
+    public squadronTrait: SquadronTrait | null = null
   ) {}
 
   get defense(): Stat {
-    return new Stat(this.defenseBase, this.hasUpgrade('Shields') ? 1 : 0)
+    const shieldsBonus = this.hasUpgrade('Shields') ? 1 : 0
+    const ruggedBonus = this.squadronTrait === SquadronTrait.Rugged ? 1 : 0
+    return new Stat(this.defenseBase, shieldsBonus + ruggedBonus)
   }
 
   get pilot(): Stat | null {
-    return this.pilotBase
-      ? new Stat(this.pilotBase, this.hasUpgrade('Agile') ? 1 : 0)
-      : null
+    if (this.pilotBase == null) return null
+
+    const agileBonus = this.hasUpgrade('Agile') ? 1 : 0
+    const hotshotsBonus = this.squadronTrait === SquadronTrait.Hotshots ? 1 : 0
+    return new Stat(this.pilotBase, agileBonus + hotshotsBonus)
   }
 
   get weapons(): Weapon[] {
-    const modifier = this.hasUpgrade('Targeting Computer') ? 1 : 0
+    const targetingComputerBonus = this.hasUpgrade('Targeting Computer') ? 1 : 0
+    const berserkerBonus =
+      this.squadronTrait === SquadronTrait.BersekerIntelligence ? 1 : 0
     return this.weaponsBase.map(
-      (b) => new Weapon(new Stat(b.firepower, modifier), b.arc)
+      (b) =>
+        new Weapon(
+          new Stat(b.firepower, targetingComputerBonus + berserkerBonus),
+          b.arc
+        )
     )
   }
 
@@ -217,6 +240,7 @@ type SnubfighterOptions = {
   weaponsBase?: WeaponBase[]
   pilotBase?: Rating | null
   upgrades?: UpgradeKeys[]
+  squadronTrait?: SquadronTrait | null
 }
 
 export function Snubfighter({
@@ -225,6 +249,7 @@ export function Snubfighter({
   weaponsBase = [],
   pilotBase = null,
   upgrades = [],
+  squadronTrait = null,
 }: SnubfighterOptions = {}) {
   return new Ship(
     name,
@@ -233,7 +258,8 @@ export function Snubfighter({
     Rating.D6,
     weaponsBase,
     pilotBase,
-    upgrades
+    upgrades,
+    squadronTrait
   )
 }
 
@@ -243,6 +269,7 @@ type GunshipOptions = {
   weaponsBase?: WeaponBase[]
   pilotBase?: Rating | null
   upgrades?: UpgradeKeys[]
+  squadronTrait?: SquadronTrait | null
 }
 
 export function Gunship({
@@ -251,6 +278,7 @@ export function Gunship({
   weaponsBase = [],
   pilotBase = null,
   upgrades = [],
+  squadronTrait = null,
 }: GunshipOptions = {}) {
   return new Ship(
     name,
@@ -259,7 +287,8 @@ export function Gunship({
     Rating.D8,
     weaponsBase,
     pilotBase,
-    upgrades
+    upgrades,
+    squadronTrait
   )
 }
 
@@ -268,6 +297,7 @@ type CorvetteOptions = {
   weaponsBase?: WeaponBase[]
   pilotBase?: Rating | null
   upgrades?: UpgradeKeys[]
+  squadronTrait?: SquadronTrait | null
 }
 
 export function Corvette({
@@ -275,6 +305,7 @@ export function Corvette({
   weaponsBase = [],
   pilotBase = null,
   upgrades = [],
+  squadronTrait = null,
 }: CorvetteOptions = {}): Ship {
   return new Ship(
     name,
@@ -283,6 +314,7 @@ export function Corvette({
     Rating.D10,
     weaponsBase,
     pilotBase,
-    upgrades
+    upgrades,
+    squadronTrait
   )
 }
