@@ -1,5 +1,6 @@
-import { costWithoutPilot } from './cost.ts'
+import { costWithoutPilot, costWithPilot } from './cost.ts'
 import {
+  Rarity,
   Rating,
   Ship,
   ShipType,
@@ -7,6 +8,7 @@ import {
   UPGRADES,
   Weapon,
   WeaponArc,
+  type UpgradeKeys,
 } from './model.ts'
 
 export function validateShip(ship: Ship): string[] {
@@ -242,6 +244,41 @@ function validateCost(ship: Ship): string | null {
   return shipCost > MAX_COST[ship.shipType]
     ? `The ship's non-pilot cost (${shipCost}) exceeds the maximum for a ${formatShipType(ship.shipType)} (${MAX_COST[ship.shipType]})`
     : null
+}
+
+export function validateSquadron(ships: Ship[]): string[] {
+  let results: string[] = []
+
+  let snubfighterPoints = 0
+  let totalPoints = 0
+  for (const s of ships) {
+    const cost = costWithPilot(s)
+    totalPoints += cost
+    if (s.shipType === ShipType.Snubfighter) snubfighterPoints += cost
+  }
+  if (snubfighterPoints * 2 < totalPoints)
+    results.push('A squadron must contain at least 50% snubfighters, by points')
+
+  if (ships.length < 4)
+    results.push('A squadron must contain at least four ships')
+  if (ships.length > 16)
+    results.push('A squadron must contain at most 16 ships')
+
+  const upgradeCount = new Map<UpgradeKeys, number>()
+  for (const s of ships) {
+    for (const u of s.upgrades) {
+      upgradeCount.set(u, (upgradeCount.get(u) ?? 0) + 1)
+    }
+  }
+
+  upgradeCount.forEach((n, u) => {
+    if (UPGRADES[u].rarity === Rarity.Rare && n > 1)
+      results.push(`At most one ship can carry the ${u} upgrade`)
+    if (UPGRADES[u].rarity === Rarity.Uncommon && n > 3)
+      results.push(`At most three ships can carry the ${u} upgrade`)
+  })
+
+  return results
 }
 
 function formatShipType(t: ShipType): string {
