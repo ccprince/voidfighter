@@ -9,7 +9,7 @@ export function printableVersion(ship: Ship): string {
   return `${nameBlock}:${ship.speed}:${ship.defense}:${weaponBlock}:${ship.pilot}:${upgradesBlock}`
 }
 
-function formatWeapon(w: Weapon): string {
+export function formatWeapon(w: Weapon): string {
   let arc: string
   if (w.arc === WeaponArc.Turret) arc = 'T'
   else if (w.arc === WeaponArc.EnhancedTurret) arc = 'E'
