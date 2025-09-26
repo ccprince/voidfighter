@@ -2,7 +2,6 @@
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import { Ship } from '@/model/model'
 import { formatWeapon } from '@/model/printable'
-import { defineEmits } from 'vue'
 
 defineProps({
   ship: { type: Ship, required: true },
