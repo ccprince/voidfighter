@@ -35,12 +35,7 @@ interface ShipRecord {
   ship: Ship
 }
 
-const squad = ref<ShipRecord[]>([
-  {
-    id: 999,
-    ship: Corvette({ upgrades: ['Carrier', 'Decoy'] }),
-  },
-])
+const squad = ref<ShipRecord[]>([])
 
 function handleSquadronTrait() {
   console.log(`new trait: ${squadronTrait.value}`)
@@ -61,11 +56,15 @@ function handleAddShip(t: ShipType) {
     ship = Snubfighter({
       weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
       pilotBase: Rating.D6,
+      squadronTrait: squadronTrait.value,
     })
   } else if (t === ShipType.Gunship) {
-    ship = Gunship({ pilotBase: Rating.D6 })
+    ship = Gunship({ pilotBase: Rating.D6, squadronTrait: squadronTrait.value })
   } else {
-    ship = Corvette({ pilotBase: Rating.D6 })
+    ship = Corvette({
+      pilotBase: Rating.D6,
+      squadronTrait: squadronTrait.value,
+    })
   }
 
   const record = { id: nextId, ship }
