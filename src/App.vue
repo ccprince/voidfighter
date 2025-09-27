@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue'
+import AddShipDialog from './components/AddShipDialog.vue'
 import EditShipDialog from './components/EditShipDialog.vue'
 import ShipCard from './components/ShipCard.vue'
 import { costWithoutPilot, costWithPilot } from './model/cost'
@@ -8,6 +9,7 @@ import {
   Gunship,
   Rating,
   Ship,
+  ShipType,
   Snubfighter,
   SquadronTrait,
   WeaponArc,
@@ -40,77 +42,7 @@ interface ShipRecord {
   ship: Ship
 }
 
-const squad = ref<ShipRecord[]>([
-  {
-    id: 1,
-    ship: Snubfighter({
-      name: 'Hellhound A',
-      speed: 2,
-      weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
-      upgrades: ['Repair', 'Shields', 'Torpedoes'],
-      pilotBase: Rating.D8,
-    }) as Ship,
-  },
-  {
-    id: 2,
-    ship: Corvette({
-      name: 'Auroch',
-      weaponsBase: [
-        { firepower: Rating.D10, arc: WeaponArc.EnhancedTurret },
-        { firepower: Rating.D8, arc: WeaponArc.Turret },
-        { firepower: Rating.D8, arc: WeaponArc.Turret },
-      ],
-      upgrades: ['Fast', 'Enhanced Turret', 'Repair', 'Shields'],
-      pilotBase: Rating.D8,
-    }) as Ship,
-  },
-  {
-    id: 3,
-    ship: Gunship({
-      name: 'Gorgon',
-      speed: 2,
-      weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
-      upgrades: ['Targeting Computer'],
-      pilotBase: Rating.D8,
-    }) as Ship,
-  },
-  {
-    id: 4,
-    ship: Corvette({
-      name: 'Auroch',
-      weaponsBase: [
-        { firepower: Rating.D10, arc: WeaponArc.EnhancedTurret },
-        { firepower: Rating.D8, arc: WeaponArc.Turret },
-        { firepower: Rating.D8, arc: WeaponArc.Turret },
-      ],
-      upgrades: ['Fast', 'Enhanced Turret', 'Repair', 'Shields'],
-      pilotBase: Rating.D8,
-    }) as Ship,
-  },
-  {
-    id: 5,
-    ship: Gunship({
-      name: 'Gorgon',
-      speed: 2,
-      weaponsBase: [{ firepower: Rating.D8, arc: WeaponArc.Front }],
-      upgrades: ['Targeting Computer'],
-      pilotBase: Rating.D8,
-    }) as Ship,
-  },
-  {
-    id: 6,
-    ship: Corvette({
-      name: 'Auroch',
-      weaponsBase: [
-        { firepower: Rating.D10, arc: WeaponArc.EnhancedTurret },
-        { firepower: Rating.D8, arc: WeaponArc.Turret },
-        { firepower: Rating.D8, arc: WeaponArc.Turret },
-      ],
-      upgrades: ['Fast', 'Enhanced Turret', 'Repair', 'Shields'],
-      pilotBase: Rating.D8,
-    }) as Ship,
-  },
-])
+const squad = ref<ShipRecord[]>([])
 
 function handleSquadronTrait() {
   for (const record of squad.value) {
@@ -121,6 +53,25 @@ function handleSquadronTrait() {
 const editShipDialog = useTemplateRef('edit-ship-dialog')
 const shipToEdit = ref(Corvette())
 const shipIdToEdit = ref(0)
+
+let nextId = 1
+function handleAddShip(t: ShipType) {
+  let ship: Ship
+  if (t === ShipType.Snubfighter) {
+    ship = Snubfighter({
+      weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+    })
+  } else if (t === ShipType.Gunship) {
+    ship = Gunship()
+  } else {
+    ship = Corvette()
+  }
+
+  const record = { id: nextId, ship }
+  nextId++
+  squad.value.push(record)
+  handleEdit(record)
+}
 
 function handleEdit(record: ShipRecord) {
   console.log(`handleEdit: ship = ${JSON.stringify(record.ship)}`)
@@ -210,7 +161,8 @@ const totalWithPilots = computed(() =>
           @edit="handleEdit(r as ShipRecord)"
         ></ShipCard>
       </v-sheet>
-      <v-btn color="primary">Add Ship</v-btn>
+
+      <AddShipDialog @newShip="handleAddShip"></AddShipDialog>
 
       <EditShipDialog
         ref="edit-ship-dialog"
