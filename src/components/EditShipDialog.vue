@@ -70,12 +70,11 @@ function addWeapon() {
   )
   let arc: WeaponArc
   if (!hasFront) arc = WeaponArc.Front
-  else if (localShip.value.shipType === ShipType.Snubfighter)
-    arc = WeaponArc.Rear
   else arc = WeaponArc.Turret
 
   localShip.value.weaponsBase.push({
-    firepower: Rating.D6,
+    firepower:
+      localShip.value.shipType === ShipType.Corvette ? Rating.D8 : Rating.D6,
     arc,
   })
 }
