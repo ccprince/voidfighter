@@ -4,6 +4,7 @@ import AddShipDialog from './components/AddShipDialog.vue'
 import ConfirmDelete from './components/ConfirmDelete.vue'
 import EditShipDialog from './components/EditShipDialog.vue'
 import ShipCard from './components/ShipCard.vue'
+import SquadronInfo from './components/SquadronInfo.vue'
 import { costWithoutPilot, costWithPilot } from './model/cost'
 import {
   Corvette,
@@ -15,6 +16,7 @@ import {
   SquadronTrait,
   WeaponArc,
 } from './model/model'
+import { validateSquadron } from './model/validation'
 
 //
 // Edit squadron
@@ -23,16 +25,6 @@ import {
 const squadronName = ref('Screaming Firehawks')
 const squadronTrait = ref<SquadronTrait>(SquadronTrait.BersekerIntelligence)
 const leaderTrait = ref('Ace')
-const validLeaderTraits = [
-  'Ace',
-  'Disciplined',
-  'Hive Mind',
-  'Inspiring',
-  'Lucky',
-  'Mystical Adept',
-  'Need for Speed',
-  'Tactician',
-]
 
 //
 // Edit ships
@@ -51,6 +43,7 @@ const squad = ref<ShipRecord[]>([
 ])
 
 function handleSquadronTrait() {
+  console.log(`new trait: ${squadronTrait.value}`)
   for (const record of squad.value) {
     record.ship.squadronTrait = squadronTrait.value
   }
@@ -128,6 +121,10 @@ const totalWithoutPilots = computed(() =>
 const totalWithPilots = computed(() =>
   squad.value.reduce((acc, r) => acc + costWithPilot(r.ship as Ship), 0)
 )
+
+const squadronErrors = computed(() =>
+  validateSquadron(squad.value.map((r) => r.ship) as Ship[])
+)
 </script>
 
 <template>
@@ -146,44 +143,15 @@ const totalWithPilots = computed(() =>
     <v-main id="main" class="mt-12 pa-5">
       <h1>Squadron</h1>
 
-      <v-sheet class="d-flex align-center border mb-3 pa-3">
-        <v-container>
-          <v-row>
-            <v-col>
-              <v-text-field label="Name" v-model="squadronName"></v-text-field>
-            </v-col>
-            <v-col class="v-col-4">
-              <v-container class="justify-right">
-                <v-row
-                  ><b>Total points (without pilots):&nbsp;</b>
-                  {{ totalWithoutPilots }}</v-row
-                >
-                <v-row
-                  ><b>Total points (with pilots):&nbsp;</b>
-                  {{ totalWithPilots }}</v-row
-                >
-              </v-container>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-select
-                label="Squadron Trait"
-                v-model="squadronTrait"
-                :items="Object.values(SquadronTrait)"
-                @update:model-value="handleSquadronTrait"
-              ></v-select>
-            </v-col>
-            <v-col>
-              <v-select
-                label="Leader Trait"
-                v-model="leaderTrait"
-                :items="validLeaderTraits"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-sheet>
+      <SquadronInfo
+        v-model:squadron-name="squadronName"
+        v-model:squadron-trait="squadronTrait"
+        v-model:leader-trait="leaderTrait"
+        :totalWithoutPilots="totalWithoutPilots"
+        :totalWithPilots="totalWithPilots"
+        :errors="squadronErrors"
+        @update:squadron-trait="handleSquadronTrait"
+      ></SquadronInfo>
 
       <h1 class="mt-5">Ships</h1>
       <v-sheet class="d-flex flex-wrap align-start ga-3">
