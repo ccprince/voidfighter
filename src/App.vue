@@ -8,15 +8,38 @@ import {
   Rating,
   Ship,
   Snubfighter,
+  SquadronTrait,
   WeaponArc,
 } from './model/model'
+
+//
+// Edit squadron
+//
+
+const squadronName = ref('Screaming Firehawks')
+const squadronTrait = ref<SquadronTrait>(SquadronTrait.BersekerIntelligence)
+const leaderTrait = ref('Ace')
+const validLeaderTraits = [
+  'Ace',
+  'Disciplined',
+  'Hive Mind',
+  'Inspiring',
+  'Lucky',
+  'Mystical Adept',
+  'Need for Speed',
+  'Tactician',
+]
+
+//
+// Edit ships
+//
 
 interface ShipRecord {
   id: number
   ship: Ship
 }
 
-const squad = ref([
+const squad = ref<ShipRecord[]>([
   {
     id: 1,
     ship: Snubfighter({
@@ -88,6 +111,12 @@ const squad = ref([
   },
 ])
 
+function handleSquadronTrait() {
+  for (const record of squad.value) {
+    record.ship.squadronTrait = squadronTrait.value
+  }
+}
+
 const editShipDialog = useTemplateRef('edit-ship-dialog')
 const shipToEdit = ref(Corvette())
 const shipIdToEdit = ref(0)
@@ -132,9 +161,24 @@ function handleUpdateShip(ship: Ship) {
 
       <v-sheet class="d-flex align-center border mb-3 pa-3">
         <v-container>
-          <v-row><b>Name:&nbsp;</b> XXX</v-row>
-          <v-row><b>Squadron Trait:&nbsp;</b> XXX</v-row>
-          <v-row><b>Leader Trait:&nbsp;</b> XXX</v-row>
+          <v-row>
+            <v-text-field label="Name" v-model="squadronName"></v-text-field>
+          </v-row>
+          <v-row>
+            <v-select
+              label="Squadron Trait"
+              v-model="squadronTrait"
+              :items="Object.values(SquadronTrait)"
+              @update:model-value="handleSquadronTrait"
+            ></v-select>
+          </v-row>
+          <v-row>
+            <v-select
+              label="Leader Trait"
+              v-model="leaderTrait"
+              :items="validLeaderTraits"
+            ></v-select>
+          </v-row>
         </v-container>
         <v-container class="justify-right">
           <v-row><b>Total points (without pilots):&nbsp;</b> XXX</v-row>
