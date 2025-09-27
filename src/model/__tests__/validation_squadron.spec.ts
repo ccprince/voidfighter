@@ -25,6 +25,9 @@ describe('Number of ships in the squadron', () => {
       'A squadron must contain at most 16 ships',
     ])
   })
+  it("doesn't cause an error at zero", () => {
+    expect(validateSquadron([])).toEqual([])
+  })
 })
 
 describe('Squadron must be 50% snubfighters by points', () => {

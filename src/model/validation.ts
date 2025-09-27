@@ -265,7 +265,7 @@ export function validateSquadron(ships: Ship[]): string[] {
   if (snubfighterPoints * 2 < totalPoints)
     results.push('A squadron must contain at least 50% snubfighters, by points')
 
-  if (ships.length < 4)
+  if (ships.length < 4 && ships.length > 0)
     results.push('A squadron must contain at least four ships')
   if (ships.length > 16)
     results.push('A squadron must contain at most 16 ships')
