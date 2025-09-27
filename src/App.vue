@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue'
 import AddShipDialog from './components/AddShipDialog.vue'
+import ConfirmDelete from './components/ConfirmDelete.vue'
 import EditShipDialog from './components/EditShipDialog.vue'
 import ShipCard from './components/ShipCard.vue'
 import { costWithoutPilot, costWithPilot } from './model/cost'
@@ -51,6 +52,7 @@ function handleSquadronTrait() {
 }
 
 const editShipDialog = useTemplateRef('edit-ship-dialog')
+const confirmDeleteDialog = useTemplateRef('confirm-delete-dialog')
 const shipToEdit = ref(Corvette())
 const shipIdToEdit = ref(0)
 
@@ -92,6 +94,25 @@ function handleUpdateShip(ship: Ship) {
   squad.value = newSquad
 
   editShipDialog.value?.closeDialog()
+}
+
+function handleDelete(r: ShipRecord) {
+  doDelete(r.ship.name, r.id)
+}
+
+async function handleDeleteFromEdit() {
+  if (await doDelete(shipToEdit.value.name, shipIdToEdit.value)) {
+    editShipDialog.value?.closeDialog()
+  }
+}
+
+async function doDelete(name: string, id: number) {
+  const deleteIt = await confirmDeleteDialog.value?.showDialog(name)
+  if (deleteIt) {
+    const newSquad = squad.value.filter((r) => r.id !== id)
+    squad.value = newSquad
+  }
+  return deleteIt
 }
 
 const totalWithoutPilots = computed(() =>
@@ -159,6 +180,7 @@ const totalWithPilots = computed(() =>
           key="r.id"
           :ship="r.ship as Ship"
           @edit="handleEdit(r as ShipRecord)"
+          @delete="handleDelete(r as ShipRecord)"
         ></ShipCard>
       </v-sheet>
 
@@ -168,7 +190,10 @@ const totalWithPilots = computed(() =>
         ref="edit-ship-dialog"
         :ship="shipToEdit"
         @update:ship="handleUpdateShip"
+        @delete="handleDeleteFromEdit"
       ></EditShipDialog>
+
+      <ConfirmDelete ref="confirm-delete-dialog"></ConfirmDelete>
     </v-main>
 
     <v-footer>

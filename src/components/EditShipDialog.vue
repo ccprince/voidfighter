@@ -5,7 +5,7 @@ import { validateShip } from '@/model/validation'
 import { computed, ref, watch } from 'vue'
 
 const props = defineProps(['ship'])
-const emit = defineEmits(['update:ship'])
+const emit = defineEmits(['update:ship', 'delete'])
 
 const localShip = ref(props.ship)
 watch(props, () => {
@@ -50,6 +50,10 @@ defineExpose({ showDialog, closeDialog })
 
 function handleOK() {
   emit('update:ship', localShip.value.copy())
+}
+
+function handleDelete() {
+  emit('delete')
 }
 </script>
 
@@ -157,6 +161,7 @@ function handleOK() {
       </v-card-text>
 
       <v-card-actions>
+        <v-btn color="error" @click="handleDelete">Delete</v-btn>
         <v-spacer></v-spacer>
 
         <v-btn color="error" @click="closeDialog">Cancel</v-btn>

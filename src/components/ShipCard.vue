@@ -8,7 +8,7 @@ const props = defineProps({
   ship: { type: Object as PropType<Ship>, required: true },
 })
 
-const emit = defineEmits(['edit'])
+const emit = defineEmits(['edit', 'delete'])
 </script>
 
 <template>
@@ -39,6 +39,7 @@ const emit = defineEmits(['edit'])
       <v-row class="light" no-gutters>
         <v-col class="pa-1">{{ ship.upgrades.join(', ') }}</v-col>
       </v-row>
+
       <v-overlay
         contained
         absolute
@@ -48,7 +49,8 @@ const emit = defineEmits(['edit'])
         scrim="white"
         opacity="0.6"
       >
-        <v-btn color="primary" @click="emit('edit')">Edit</v-btn>
+        <v-btn color="primary" @click="emit('edit')" class="mr-2">Edit</v-btn>
+        <v-btn color="error" @click="emit('delete')">Delete</v-btn>
       </v-overlay>
     </v-container>
   </v-hover>
