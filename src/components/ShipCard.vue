@@ -2,11 +2,13 @@
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import { Ship } from '@/model/model'
 import { formatWeapon } from '@/model/printable'
-import type { PropType } from 'vue'
 
-const props = defineProps({
-  ship: { type: Object as PropType<Ship>, required: true },
-})
+interface Props {
+  ship: Ship
+  messages: string[]
+}
+
+const props = defineProps<Props>()
 
 const emit = defineEmits(['edit', 'delete'])
 </script>
@@ -38,6 +40,13 @@ const emit = defineEmits(['edit', 'delete'])
       </v-row>
       <v-row class="light" no-gutters>
         <v-col class="pa-1">{{ ship.upgrades.join(', ') }}</v-col>
+      </v-row>
+      <v-row no-gutters v-if="messages.length > 0" class="bg-red-lighten-3">
+        <v-col>
+          <ul>
+            <li v-for="m in messages" :key="m">{{ m }}</li>
+          </ul>
+        </v-col>
       </v-row>
 
       <v-overlay

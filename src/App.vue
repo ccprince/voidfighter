@@ -16,7 +16,7 @@ import {
   SquadronTrait,
   WeaponArc,
 } from './model/model'
-import { validateSquadron } from './model/validation'
+import { validateShip, validateSquadron } from './model/validation'
 
 //
 // Edit squadron
@@ -153,11 +153,12 @@ const squadronErrors = computed(() =>
       ></SquadronInfo>
 
       <h1 class="mt-5">Ships</h1>
-      <v-sheet class="d-flex flex-wrap align-start ga-3">
+      <v-sheet class="d-flex flex-wrap align-start ga-3 mb-4">
         <ShipCard
           v-for="r in squad"
           key="r.id"
           :ship="r.ship as Ship"
+          :messages="validateShip(r.ship as Ship)"
           @edit="handleEdit(r as ShipRecord)"
           @delete="handleDelete(r as ShipRecord)"
         ></ShipCard>
