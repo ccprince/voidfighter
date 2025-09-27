@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef } from 'vue'
 import EditShipDialog from './components/EditShipDialog.vue'
 import ShipCard from './components/ShipCard.vue'
+import { costWithoutPilot, costWithPilot } from './model/cost'
 import {
   Corvette,
   Gunship,
@@ -141,6 +142,14 @@ function handleUpdateShip(ship: Ship) {
 
   editShipDialog.value?.closeDialog()
 }
+
+const totalWithoutPilots = computed(() =>
+  squad.value.reduce((acc, r) => acc + costWithoutPilot(r.ship as Ship), 0)
+)
+
+const totalWithPilots = computed(() =>
+  squad.value.reduce((acc, r) => acc + costWithPilot(r.ship as Ship), 0)
+)
 </script>
 
 <template>
@@ -181,8 +190,14 @@ function handleUpdateShip(ship: Ship) {
           </v-row>
         </v-container>
         <v-container class="justify-right">
-          <v-row><b>Total points (without pilots):&nbsp;</b> XXX</v-row>
-          <v-row><b>Total points (with pilots):&nbsp;</b> XXX</v-row>
+          <v-row
+            ><b>Total points (without pilots):&nbsp;</b>
+            {{ totalWithoutPilots }}</v-row
+          >
+          <v-row
+            ><b>Total points (with pilots):&nbsp;</b>
+            {{ totalWithPilots }}</v-row
+          >
         </v-container>
       </v-sheet>
 
