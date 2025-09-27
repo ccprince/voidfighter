@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
-import { Rating, ShipType, WeaponArc } from '@/model/model'
+import { Rating, ShipType, WeaponArc, type WeaponBase } from '@/model/model'
 import { validateShip } from '@/model/validation'
 import { computed, ref, watch } from 'vue'
 
@@ -25,7 +25,6 @@ const minSpeed = computed(() =>
   localShip.value.shipType === ShipType.Snubfighter ? 2 : 1
 )
 const maxSpeed = computed(() => {
-  console.log(`maxSpeed -> shipType = ${localShip.value.shipType}`)
   switch (localShip.value.shipType) {
     case ShipType.Snubfighter:
       return 3
@@ -54,6 +53,59 @@ function handleOK() {
 
 function handleDelete() {
   emit('delete')
+}
+
+function addWeapon() {
+  const hasFront = localShip.value.weaponsBase.some(
+    (w: WeaponBase) => w.arc === WeaponArc.Front
+  )
+  let arc: WeaponArc
+  if (!hasFront) arc = WeaponArc.Front
+  else if (localShip.value.shipType === ShipType.Snubfighter)
+    arc = WeaponArc.Rear
+  else arc = WeaponArc.Turret
+
+  localShip.value.weaponsBase.push({
+    firepower: Rating.D6,
+    arc,
+  })
+}
+
+function shouldShowAddWeaponButton() {
+  let max: number
+  if (localShip.value.shipType === ShipType.Snubfighter) max = 2
+  else if (localShip.value.shipType === ShipType.Gunship) max = 2
+  else max = 3
+  if (localShip.value.hasUpgrade('Hard Point')) max++
+
+  return localShip.value.weapons.length < max
+}
+
+function shouldShowDeleteWeaponButton(index: number) {
+  return (
+    localShip.value.shipType === ShipType.Corvette ||
+    localShip.value.shipType === ShipType.Gunship ||
+    index > 0
+  )
+}
+
+function deleteWeapon(index: number) {
+  localShip.value.weaponsBase.splice(index, 1)
+}
+
+function validFirepowers(): Rating[] {
+  if (localShip.value.shipType === ShipType.Snubfighter)
+    return [Rating.D6, Rating.D8]
+  else if (localShip.value.shipType === ShipType.Corvette)
+    return [Rating.D8, Rating.D10]
+  else return [Rating.D6, Rating.D8, Rating.D10]
+}
+
+function validArcs(index: number): WeaponArc[] {
+  if (localShip.value.shipType !== ShipType.Snubfighter)
+    return Object.values(WeaponArc)
+
+  return index == 0 ? [WeaponArc.Front] : [WeaponArc.Rear, WeaponArc.Turret]
 }
 </script>
 
@@ -102,7 +154,7 @@ function handleDelete() {
               ></v-select>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="mb-2">
             <h2>Guns</h2>
           </v-row>
           <v-row>
@@ -112,7 +164,7 @@ function handleDelete() {
                   <v-col class="pr-1 v-col-5">
                     <v-select
                       label="Firepower"
-                      :items="[Rating.D6, Rating.D8, Rating.D10]"
+                      :items="validFirepowers()"
                       :model-value="w.firepower"
                       @update:model-value="
                         (fp) => (localShip.weaponsBase[idx].firepower = fp)
@@ -122,12 +174,7 @@ function handleDelete() {
                   <v-col class="pl-1 pr-1">
                     <v-select
                       label="Arc"
-                      :items="[
-                        WeaponArc.Front,
-                        WeaponArc.Rear,
-                        WeaponArc.Turret,
-                        WeaponArc.EnhancedTurret,
-                      ]"
+                      :items="validArcs(idx)"
                       :model-value="w.arc"
                       @update:model-value="
                         (a) => (localShip.weaponsBase[idx].arc = a)
@@ -135,8 +182,16 @@ function handleDelete() {
                     ></v-select>
                   </v-col>
                   <v-col class="pl-1 v-col-2">
-                    <v-btn icon="mdi-delete-outline" rounded="lg"></v-btn>
+                    <v-btn
+                      icon="mdi-delete-outline"
+                      rounded="lg"
+                      v-if="shouldShowDeleteWeaponButton(idx)"
+                      @click="deleteWeapon(idx)"
+                    ></v-btn>
                   </v-col>
+                </v-row>
+                <v-row v-if="shouldShowAddWeaponButton()">
+                  <v-btn color="primary" @click="addWeapon">Add</v-btn>
                 </v-row>
               </v-sheet>
             </v-col>
