@@ -67,11 +67,12 @@ function handleAddShip(t: ShipType) {
   if (t === ShipType.Snubfighter) {
     ship = Snubfighter({
       weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
+      pilotBase: Rating.D6,
     })
   } else if (t === ShipType.Gunship) {
-    ship = Gunship()
+    ship = Gunship({ pilotBase: Rating.D6 })
   } else {
-    ship = Corvette()
+    ship = Corvette({ pilotBase: Rating.D6 })
   }
 
   const record = { id: nextId, ship }
