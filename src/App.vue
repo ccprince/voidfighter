@@ -43,7 +43,12 @@ interface ShipRecord {
   ship: Ship
 }
 
-const squad = ref<ShipRecord[]>([])
+const squad = ref<ShipRecord[]>([
+  {
+    id: 999,
+    ship: Corvette({ upgrades: ['Carrier', 'Decoy'] }),
+  },
+])
 
 function handleSquadronTrait() {
   for (const record of squad.value) {

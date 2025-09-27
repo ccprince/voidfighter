@@ -9,7 +9,7 @@ import {
   SquadronTrait,
   WeaponArc,
 } from '../model.ts'
-import { validateShip } from '../validation.ts'
+import { getUpgradeCountLimit, validateShip } from '../validation.ts'
 
 describe('Validate speed', () => {
   describe('for valid ships', () => {
@@ -336,19 +336,21 @@ describe('Validate weapons', () => {
 
 describe('Upgrades', () => {
   describe('are limited by ship type', () => {
-    it.each([
+    const cases = [
       {
         ship: Snubfighter({
           weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
           upgrades: ['Fast', 'Hard Point', 'Maneuverable', 'Repair'],
         }),
-        expected: 'Snubfighters may have at most 3 upgrades',
+        expectedMessage: 'Snubfighters may have at most 3 upgrades',
+        expectedCount: 3,
       },
       {
         ship: Gunship({
           upgrades: ['Fast', 'Hard Point', 'Maneuverable', 'Repair', 'Shields'],
         }),
-        expected: 'Gunships may have at most 4 upgrades',
+        expectedMessage: 'Gunships may have at most 4 upgrades',
+        expectedCount: 4,
       },
       {
         ship: Corvette({
@@ -361,10 +363,21 @@ describe('Upgrades', () => {
             'Torpedoes',
           ],
         }),
-        expected: 'Corvettes may have at most 5 upgrades',
+        expectedMessage: 'Corvettes may have at most 5 upgrades',
+        expectedCount: 5,
       },
-    ])('$ship.shipType', ({ ship, expected }) => {
-      expect(validateShip(ship)).toEqual([expected])
+    ]
+
+    describe('error messages', () => {
+      it.each(cases)('$ship.shipType', ({ ship, expectedMessage }) => {
+        expect(validateShip(ship)).toEqual([expectedMessage])
+      })
+    })
+
+    describe('calculate limit', () => {
+      it.each(cases)('$ship.shipType', ({ ship, expectedCount }) => {
+        expect(getUpgradeCountLimit(ship)).toEqual(expectedCount)
+      })
     })
   })
 
@@ -421,7 +434,7 @@ describe('Upgrades', () => {
   })
 
   describe('are limited by ship type and Fully Loaded upgrade', () => {
-    it.each([
+    const cases = [
       {
         ship: Snubfighter({
           weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
@@ -435,6 +448,7 @@ describe('Upgrades', () => {
           ],
         }),
         message: 'Snubfighters with Fully Loaded may have at most 4 upgrades',
+        count: 4,
       },
       {
         ship: Gunship({
@@ -449,6 +463,7 @@ describe('Upgrades', () => {
           ],
         }),
         message: 'Gunships with Fully Loaded may have at most 5 upgrades',
+        count: 5,
       },
       {
         ship: Corvette({
@@ -464,14 +479,25 @@ describe('Upgrades', () => {
           ],
         }),
         message: 'Corvettes with Fully Loaded may have at most 6 upgrades',
+        count: 6,
       },
-    ])('$ship.shipType', ({ ship, message }) => {
-      expect(validateShip(ship)).toEqual([message])
+    ]
+
+    describe('error messages', () => {
+      it.each(cases)('$ship.shipType', ({ ship, message }) => {
+        expect(validateShip(ship)).toEqual([message])
+      })
+    })
+
+    describe('calculate limit', () => {
+      it.each(cases)('$ship.shipType', ({ ship, count }) => {
+        expect(getUpgradeCountLimit(ship)).toEqual(count)
+      })
     })
   })
 
   describe('are limited by ship type, Fully Loaded upgrade, and High Tech trait', () => {
-    it.each([
+    const cases = [
       {
         ship: Snubfighter({
           weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
@@ -488,6 +514,7 @@ describe('Upgrades', () => {
         }),
         message:
           'Snubfighters with Fully Loaded and High Tech may have at most 5 upgrades',
+        count: 5,
       },
       {
         ship: Gunship({
@@ -505,6 +532,7 @@ describe('Upgrades', () => {
         }),
         message:
           'Gunships with Fully Loaded and High Tech may have at most 6 upgrades',
+        count: 6,
       },
       {
         ship: Corvette({
@@ -523,9 +551,20 @@ describe('Upgrades', () => {
         }),
         message:
           'Corvettes with Fully Loaded and High Tech may have at most 7 upgrades',
+        count: 7,
       },
-    ])('$ship.shipType', ({ ship, message }) => {
-      expect(validateShip(ship)).toEqual([message])
+    ]
+
+    describe('error messages', () => {
+      it.each(cases)('$ship.shipType', ({ ship, message }) => {
+        expect(validateShip(ship)).toEqual([message])
+      })
+    })
+
+    describe('calculate limit', () => {
+      it.each(cases)('$ship.shipType', ({ ship, count }) => {
+        expect(getUpgradeCountLimit(ship)).toEqual(count)
+      })
     })
   })
 

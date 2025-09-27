@@ -189,16 +189,22 @@ const UPGRADE_LIMIT = {
   [ShipType.Corvette]: 5,
 }
 
-function validateUpgradeCount(ship: Ship): string | null {
+export function getUpgradeCountLimit(ship: Ship): number {
   let max = UPGRADE_LIMIT[ship.shipType]
+  if (ship.hasUpgrade('Fully Loaded')) max++
+  if (ship.squadronTrait === SquadronTrait.HighTech) max++
+
+  return max
+}
+
+function validateUpgradeCount(ship: Ship): string | null {
+  let max = getUpgradeCountLimit(ship)
   let extraMessage = ''
   let extras: string[] = []
   if (ship.hasUpgrade('Fully Loaded')) {
-    max++
     extras.push('Fully Loaded')
   }
   if (ship.squadronTrait === SquadronTrait.HighTech) {
-    max++
     extras.push('High Tech')
   }
   if (extras.length > 0) extraMessage = ` with ${extras.join(' and ')}`

@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
-import { Rating, ShipType, WeaponArc, type WeaponBase } from '@/model/model'
-import { validateShip } from '@/model/validation'
-import { computed, ref, watch } from 'vue'
+import {
+  Rating,
+  ShipType,
+  WeaponArc,
+  type UpgradeKeys,
+  type WeaponBase,
+} from '@/model/model'
+import { getUpgradeCountLimit, validateShip } from '@/model/validation'
+import { computed, ref, useTemplateRef, watch } from 'vue'
+import UpgradeSelector from './UpgradeSelector.vue'
 
 const props = defineProps(['ship'])
 const emit = defineEmits(['update:ship', 'delete'])
+let key = 0
 
 const localShip = ref(props.ship)
 watch(props, () => {
   localShip.value = props.ship
+  key = 0
 })
 
 const cost = computed(() => costWithoutPilot(localShip.value))
@@ -107,6 +116,30 @@ function validArcs(index: number): WeaponArc[] {
 
   return index == 0 ? [WeaponArc.Front] : [WeaponArc.Rear, WeaponArc.Turret]
 }
+
+function shouldShowAddUpgradeButton() {
+  return (
+    localShip.value.upgrades.length <= getUpgradeCountLimit(localShip.value)
+  )
+}
+
+const upgradeSelector = useTemplateRef('upgrade-selector')
+async function addUpgrade() {
+  const selections = (await upgradeSelector.value?.showDialog(
+    localShip.value.upgrades,
+    localShip.value.shipType
+  )) as UpgradeKeys[]
+  localShip.value.upgrades.push(...selections)
+}
+
+function deleteUpgrade(x: UpgradeKeys) {
+  const idx = localShip.value.upgrades.indexOf(x)
+  console.log(`delete: ${localShip.value.upgrades} -- ${idx}`)
+  const newupgrades = localShip.value.upgrades.toSpliced(idx, 1)
+  console.log(`toSpliced: ${newupgrades}`)
+  localShip.value.upgrades = newupgrades
+  console.log(localShip.value.upgrades)
+}
 </script>
 
 <template>
@@ -202,7 +235,21 @@ function validArcs(index: number): WeaponArc[] {
           </v-row>
           <v-row>
             <v-col>
-              <v-label>(Upgrades)</v-label>
+              <div class="d-flex ga-2">
+                <v-chip
+                  v-for="u in localShip.upgrades"
+                  closable
+                  :key="key++"
+                  @click:close="deleteUpgrade(u)"
+                  >{{ u }}</v-chip
+                >
+                <v-btn
+                  color="primary"
+                  @click="addUpgrade"
+                  v-if="shouldShowAddUpgradeButton()"
+                  >Add</v-btn
+                >
+              </div>
             </v-col>
           </v-row>
           <v-row v-if="errors.length > 0">
@@ -223,5 +270,7 @@ function validArcs(index: number): WeaponArc[] {
         <v-btn color="primary" @click="handleOK">OK</v-btn>
       </v-card-actions>
     </v-card>
+
+    <UpgradeSelector ref="upgrade-selector" />
   </v-dialog>
 </template>
