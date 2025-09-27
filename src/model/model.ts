@@ -232,6 +232,19 @@ export class Ship {
   public hasUpgrade(name: UpgradeKeys): boolean {
     return this.upgrades.includes(name)
   }
+
+  public copy(): Ship {
+    return new Ship(
+      this.name,
+      this.shipType,
+      this.speed,
+      this.defenseBase,
+      this.weaponsBase.map((wb) => ({ firepower: wb.firepower, arc: wb.arc })),
+      this.pilotBase,
+      [...this.upgrades],
+      this.squadronTrait
+    )
+  }
 }
 
 type SnubfighterOptions = {

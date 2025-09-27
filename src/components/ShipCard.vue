@@ -2,10 +2,12 @@
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import { Ship } from '@/model/model'
 import { formatWeapon } from '@/model/printable'
+import type { PropType } from 'vue'
 
-defineProps({
-  ship: { type: Ship, required: true },
+const props = defineProps({
+  ship: { type: Object as PropType<Ship>, required: true },
 })
+
 const emit = defineEmits(['edit'])
 </script>
 
