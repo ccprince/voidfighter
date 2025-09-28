@@ -32,7 +32,7 @@ const emit = defineEmits(['edit', 'delete'])
         <v-col class="border-e pa-1">{{ ship.speed }}</v-col>
         <v-col class="border-e pa-1">{{ ship.defense }}</v-col>
         <v-col class="border-e pa-1">
-          <ul>
+          <ul class="firepower">
             <li v-for="w in ship.weapons">{{ formatWeapon(w) }}</li>
           </ul>
         </v-col>
@@ -41,9 +41,9 @@ const emit = defineEmits(['edit', 'delete'])
       <v-row class="light" no-gutters>
         <v-col class="pa-1">{{ ship.upgrades.join(', ') }}</v-col>
       </v-row>
-      <v-row no-gutters v-if="messages.length > 0" class="bg-red-lighten-3">
-        <v-col>
-          <ul>
+      <v-row no-gutters v-if="messages.length > 0" class="bg-red-lighten-4">
+        <v-col class="pl-6 pt-1 pb-1">
+          <ul class="errors">
             <li v-for="m in messages" :key="m">{{ m }}</li>
           </ul>
         </v-col>
@@ -72,8 +72,12 @@ const emit = defineEmits(['edit', 'delete'])
   border: 1px solid;
 }
 
-li {
+ul.firepower li {
   list-style-type: none;
+}
+
+ul.errors li {
+  text-align: left;
 }
 
 .darkest {
@@ -84,6 +88,7 @@ li {
 .light {
   background-color: #d7deeb;
   color: black;
+  min-height: 29px;
 }
 
 .medium {
