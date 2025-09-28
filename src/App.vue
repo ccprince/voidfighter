@@ -140,8 +140,6 @@ const squadronErrors = computed(() =>
     </v-app-bar>
 
     <v-main id="main" class="mt-12 pa-5">
-      <h1>Squadron</h1>
-
       <SquadronInfo
         v-model:squadron-name="squadronName"
         v-model:squadron-trait="squadronTrait"
@@ -152,7 +150,6 @@ const squadronErrors = computed(() =>
         @update:squadron-trait="handleSquadronTrait"
       ></SquadronInfo>
 
-      <h1 class="mt-5">Ships</h1>
       <v-sheet class="d-flex flex-wrap align-start ga-3 mb-4">
         <ShipCard
           v-for="r in squad"

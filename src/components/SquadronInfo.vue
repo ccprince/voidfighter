@@ -24,46 +24,54 @@ const validLeaderTraits = [
 </script>
 
 <template>
-  <v-sheet class="d-flex align-center border mb-3 pa-3">
-    <v-container>
-      <v-row>
-        <v-col>
-          <v-text-field label="Name" v-model="squadronName"></v-text-field>
-        </v-col>
-        <v-col class="v-col-4">
-          <v-container class="justify-right">
-            <v-row
-              ><b>Total points (without pilots):&nbsp;</b>
-              {{ totalWithoutPilots }}</v-row
-            >
-            <v-row
-              ><b>Total points (with pilots):&nbsp;</b>
-              {{ totalWithPilots }}</v-row
-            >
-          </v-container>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-select
-            label="Squadron Trait"
-            v-model="squadronTrait"
-            :items="Object.values(SquadronTrait)"
-          ></v-select>
-        </v-col>
-        <v-col>
-          <v-select
-            label="Leader Trait"
-            v-model="leaderTrait"
-            :items="validLeaderTraits"
-          ></v-select>
-        </v-col>
-      </v-row>
-      <v-row v-if="errors.length > 0">
+  <v-container class="mb-3">
+    <v-row>
+      <v-col class="pl-0 pr-0 pb-0 pr-lg-2" cols="12" sm="8" lg="10" order="1">
+        <v-text-field
+          label="Name"
+          v-model="squadronName"
+          hide-details
+        ></v-text-field>
+      </v-col>
+      <v-col
+        class="pl-0 pr-0 pb-0 pr-sm-2"
+        cols="12"
+        sm="6"
+        order="2"
+        order-sm="3"
+      >
+        <v-select
+          label="Squadron Trait"
+          v-model="squadronTrait"
+          :items="Object.values(SquadronTrait)"
+          hide-details
+        ></v-select>
+      </v-col>
+      <v-col class="pl-0 pr-0" cols="12" sm="6" order="3" order-sm="4">
+        <v-select
+          label="Leader Trait"
+          v-model="leaderTrait"
+          :items="validLeaderTraits"
+          hide-details
+        ></v-select>
+      </v-col>
+      <v-col class="pl-0 pr-0" cols="12" sm="4" lg="2" order="4" order-sm="2">
+        <v-container class="pt-0 pt-sm-4">
+          <v-row class="justify-start justify-sm-end">
+            Total points (without pilots): <b>{{ totalWithoutPilots }}</b>
+          </v-row>
+          <v-row class="justify-start justify-sm-end">
+            Total points (with pilots): <b>{{ totalWithPilots }}</b>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+    <v-row v-if="errors.length > 0" class="bg-red-lighten-4 pl-3 pr-3">
+      <v-col>
         <ul>
           <li v-for="e in errors">{{ e }}</li>
         </ul>
-      </v-row>
-    </v-container>
-  </v-sheet>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>

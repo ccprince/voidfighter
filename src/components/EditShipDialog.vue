@@ -9,8 +9,11 @@ import {
 } from '@/model/model'
 import { getUpgradeCountLimit, validateShip } from '@/model/validation'
 import { computed, ref, useTemplateRef, watch } from 'vue'
+import { useDisplay } from 'vuetify'
 import UpgradeSelector from './UpgradeSelector.vue'
 import { rarityIcon } from './helpers'
+
+const { xs } = useDisplay()
 
 const props = defineProps(['ship'])
 const emit = defineEmits(['update:ship', 'delete'])
@@ -141,8 +144,20 @@ function deleteUpgrade(x: UpgradeKeys) {
 </script>
 
 <template>
-  <v-dialog v-model="dialog">
+  <v-dialog
+    v-model="dialog"
+    scrollable
+    :fullscreen="xs"
+    max-width="550"
+    persistent
+  >
     <v-card>
+      <v-card-title>
+        {{ localShip.name }} &mdash; Points: {{ cost }} ({{
+          costPlus
+        }})</v-card-title
+      >
+      <v-card-subtitle>{{ localShip.shipType }}</v-card-subtitle>
       <v-card-text>
         <v-container>
           <v-row>
@@ -151,48 +166,58 @@ function deleteUpgrade(x: UpgradeKeys) {
                 label="Ship name"
                 v-model="localShip.name"
                 autofocus
+                hide-details
               >
-                <template #append>
-                  Points: {{ cost }} ({{ costPlus }})
-                </template>
               </v-text-field>
             </v-col>
           </v-row>
 
           <v-row>
-            <v-col>
+            <v-col cols="12" sm="4">
               <v-number-input
                 label="Speed"
                 v-model="localShip.speed"
                 :min="minSpeed"
                 :max="maxSpeed"
                 control-variant="stacked"
+                hide-details
               ></v-number-input>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="4">
               <v-text-field
                 label="Defense"
                 readonly
                 :model-value="localShip.defense.rating"
+                hide-details
               ></v-text-field>
             </v-col>
-            <v-col>
+            <v-col cols="12" sm="4">
               <v-select
                 label="Pilot"
                 :items="validPilots"
                 :model-value="localShip.pilot"
                 @update:model-value="(p) => (localShip.pilotBase = p)"
+                hide-details
               ></v-select>
             </v-col>
           </v-row>
-          <v-row class="mb-2">
+
+          <v-row>
+            <v-divider opacity="30"></v-divider>
+          </v-row>
+
+          <v-row class="">
             <h2>Guns</h2>
           </v-row>
           <v-row>
             <v-col>
               <v-sheet>
-                <v-row no-gutters v-for="(w, idx) in localShip.weapons">
-                  <v-col class="pr-1 v-col-5">
+                <v-row
+                  no-gutters
+                  v-for="(w, idx) in localShip.weapons"
+                  class="mb-3"
+                >
+                  <v-col class="mr-sm-1" cols="10" sm="3" order="1">
                     <v-select
                       label="Firepower"
                       :items="validFirepowers()"
@@ -200,9 +225,10 @@ function deleteUpgrade(x: UpgradeKeys) {
                       @update:model-value="
                         (fp) => (localShip.weaponsBase[idx].firepower = fp)
                       "
+                      hide-details
                     ></v-select>
                   </v-col>
-                  <v-col class="pl-1 pr-1">
+                  <v-col class="" cols="10" sm="6" order="3" order-sm="2">
                     <v-select
                       label="Arc"
                       :items="validArcs(idx)"
@@ -210,22 +236,43 @@ function deleteUpgrade(x: UpgradeKeys) {
                       @update:model-value="
                         (a) => (localShip.weaponsBase[idx].arc = a)
                       "
+                      hide-details
                     ></v-select>
                   </v-col>
-                  <v-col class="pl-1 v-col-2">
+                  <v-col
+                    class="pl-1 pl-sm-0"
+                    cols="2"
+                    sm="2"
+                    align-self="center"
+                    order="2"
+                    order-sm="3"
+                  >
                     <v-btn
-                      icon="mdi-delete-outline"
+                      class="ml-1 ml-s-2"
+                      icon="mdi-delete"
                       rounded="lg"
+                      color="error"
+                      variant="outlined"
                       v-if="shouldShowDeleteWeaponButton(idx)"
                       @click="deleteWeapon(idx)"
                     ></v-btn>
                   </v-col>
                 </v-row>
-                <v-row v-if="shouldShowAddWeaponButton()">
-                  <v-btn color="primary" @click="addWeapon">Add</v-btn>
-                </v-row>
               </v-sheet>
             </v-col>
+          </v-row>
+
+          <v-row class="mt-0 mb-2">
+            <v-btn
+              :disabled="!shouldShowAddWeaponButton()"
+              color="primary"
+              @click="addWeapon"
+              >Add</v-btn
+            >
+          </v-row>
+
+          <v-row>
+            <v-divider opacity="30"></v-divider>
           </v-row>
 
           <v-row>
@@ -233,7 +280,7 @@ function deleteUpgrade(x: UpgradeKeys) {
           </v-row>
           <v-row>
             <v-col>
-              <div class="d-flex ga-2">
+              <div class="d-flex ga-2 flex-wrap">
                 <v-chip
                   v-for="u in localShip.upgrades"
                   closable
@@ -243,31 +290,35 @@ function deleteUpgrade(x: UpgradeKeys) {
                   @click:close="deleteUpgrade(u)"
                   >{{ u }}</v-chip
                 >
-                <v-btn
-                  color="primary"
-                  @click="addUpgrade"
-                  v-if="shouldShowAddUpgradeButton()"
-                  >Add</v-btn
-                >
               </div>
             </v-col>
           </v-row>
-          <v-row v-if="errors.length > 0">
-            <v-col class="error">
-              <ul>
-                <li v-for="e in errors">{{ e }}</li>
-              </ul>
-            </v-col>
+          <v-row>
+            <v-btn color="primary" @click="addUpgrade"> Add</v-btn>
           </v-row>
         </v-container>
       </v-card-text>
 
       <v-card-actions>
-        <v-btn color="error" @click="handleDelete">Delete</v-btn>
-        <v-spacer></v-spacer>
+        <v-container>
+          <v-row
+            v-if="errors.length > 0"
+            class="bg-red-lighten-4 pl-2 pr-2 pt-0 pb-0"
+          >
+            <v-col>
+              <ul>
+                <li v-for="e in errors">{{ e }}</li>
+              </ul>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-btn color="error" @click="handleDelete">Delete</v-btn>
+            <v-spacer></v-spacer>
 
-        <v-btn color="error" @click="closeDialog">Cancel</v-btn>
-        <v-btn color="primary" @click="handleOK">OK</v-btn>
+            <v-btn color="error" @click="closeDialog">Cancel</v-btn>
+            <v-btn color="primary" @click="handleOK">OK</v-btn>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
 

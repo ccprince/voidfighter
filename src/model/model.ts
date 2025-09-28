@@ -17,10 +17,10 @@ export type WeaponBase = {
 }
 
 export enum WeaponArc {
-  Front = 'FRONT',
-  Rear = 'REAR',
-  Turret = 'TURRET',
-  EnhancedTurret = 'ENHANCED_TURRET',
+  Front = 'Front',
+  Rear = 'Rear',
+  Turret = 'Turret',
+  EnhancedTurret = 'Enhanced Turret',
 }
 
 export enum Rarity {
