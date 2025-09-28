@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import {
-  Rarity,
-  UPGRADES,
-  type ShipType,
-  type UpgradeKeys,
-} from '@/model/model'
+import { UPGRADES, type ShipType, type UpgradeKeys } from '@/model/model'
 import { ref } from 'vue'
+import { rarityIcon } from './helpers'
 
 const dialog = ref(false)
 const validUpgrades = ref<UpgradeKeys[]>([])
@@ -38,13 +34,6 @@ const closeDialog = () => {
 }
 
 defineExpose({ showDialog, closeDialog })
-
-function rarityIcon(u: UpgradeKeys) {
-  if (UPGRADES[u].rarity === Rarity.Rare) return 'mdi-alpha-r-circle-outline'
-  else if (UPGRADES[u].rarity === Rarity.Uncommon)
-    return 'mdi-alpha-u-circle-outline'
-  else return 'mdi-alpha-c-circle-outline'
-}
 </script>
 
 <template>
