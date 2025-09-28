@@ -37,9 +37,9 @@ defineExpose({ showDialog, closeDialog })
 </script>
 
 <template>
-  <v-dialog v-model="dialog" max-width="300">
+  <v-dialog v-model="dialog" max-width="300" scrollable>
     <v-card>
-      <v-card-title>Choose an Upgrade</v-card-title>
+      <v-card-title>Choose Upgrade</v-card-title>
 
       <v-card-text>
         <v-list
