@@ -118,9 +118,7 @@ function validArcs(index: number): WeaponArc[] {
 }
 
 function shouldShowAddUpgradeButton() {
-  return (
-    localShip.value.upgrades.length <= getUpgradeCountLimit(localShip.value)
-  )
+  return localShip.value.upgrades.length < getUpgradeCountLimit(localShip.value)
 }
 
 const upgradeSelector = useTemplateRef('upgrade-selector')
