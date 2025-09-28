@@ -10,6 +10,7 @@ import {
 import { getUpgradeCountLimit, validateShip } from '@/model/validation'
 import { computed, ref, useTemplateRef, watch } from 'vue'
 import UpgradeSelector from './UpgradeSelector.vue'
+import { rarityIcon } from './helpers'
 
 const props = defineProps(['ship'])
 const emit = defineEmits(['update:ship', 'delete'])
@@ -239,6 +240,8 @@ function deleteUpgrade(x: UpgradeKeys) {
                   v-for="u in localShip.upgrades"
                   closable
                   :key="key++"
+                  :prepend-icon="rarityIcon(u)"
+                  size="large"
                   @click:close="deleteUpgrade(u)"
                   >{{ u }}</v-chip
                 >

@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { UPGRADES, type ShipType, type UpgradeKeys } from '@/model/model'
+import {
+  Rarity,
+  UPGRADES,
+  type ShipType,
+  type UpgradeKeys,
+} from '@/model/model'
 import { ref } from 'vue'
 
 const dialog = ref(false)
@@ -33,10 +38,17 @@ const closeDialog = () => {
 }
 
 defineExpose({ showDialog, closeDialog })
+
+function rarityIcon(u: UpgradeKeys) {
+  if (UPGRADES[u].rarity === Rarity.Rare) return 'mdi-alpha-r-circle-outline'
+  else if (UPGRADES[u].rarity === Rarity.Uncommon)
+    return 'mdi-alpha-u-circle-outline'
+  else return 'mdi-alpha-c-circle-outline'
+}
 </script>
 
 <template>
-  <v-dialog v-model="dialog" max-width="250">
+  <v-dialog v-model="dialog" max-width="300">
     <v-card>
       <v-card-title>Choose an Upgrade</v-card-title>
 
@@ -47,6 +59,9 @@ defineExpose({ showDialog, closeDialog })
           density="compact"
         >
           <v-list-item v-for="u in validUpgrades" :value="u">
+            <template #prepend
+              ><v-icon size="large">{{ rarityIcon(u) }}</v-icon></template
+            >
             <v-list-item-title>{{ u }}</v-list-item-title>
           </v-list-item>
         </v-list>
