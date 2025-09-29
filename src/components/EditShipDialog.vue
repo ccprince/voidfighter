@@ -3,6 +3,7 @@ import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import {
   Rating,
   ShipType,
+  UPGRADES,
   WeaponArc,
   type UpgradeKeys,
   type WeaponBase,
@@ -120,8 +121,15 @@ function validArcs(index: number): WeaponArc[] {
   return index == 0 ? [WeaponArc.Front] : [WeaponArc.Rear, WeaponArc.Turret]
 }
 
+const occupiedUpgradeSlots = computed(() =>
+  localShip.value.upgrades.reduce(
+    (acc: number, u: UpgradeKeys) => acc + UPGRADES[u].slots,
+    0
+  )
+)
+
 function shouldShowAddUpgradeButton() {
-  return localShip.value.upgrades.length < getUpgradeCountLimit(localShip.value)
+  return occupiedUpgradeSlots.value < getUpgradeCountLimit(localShip.value)
 }
 
 const upgradeSelector = useTemplateRef('upgrade-selector')
@@ -129,7 +137,7 @@ async function addUpgrade() {
   const selections = (await upgradeSelector.value?.showDialog(
     localShip.value.upgrades,
     localShip.value.shipType,
-    getUpgradeCountLimit(localShip.value) - localShip.value.upgrades.length
+    getUpgradeCountLimit(localShip.value) - occupiedUpgradeSlots.value
   )) as UpgradeKeys[]
   localShip.value.upgrades.push(...selections)
   localShip.value.upgrades.sort()

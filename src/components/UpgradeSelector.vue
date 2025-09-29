@@ -45,7 +45,10 @@ const closeDialog = () => {
 defineExpose({ showDialog, closeDialog })
 
 function handleUpdateSelections(newSelections: UpgradeKeys[]) {
-  if (newSelections.length <= actualLimit.value) {
+  console.log(newSelections)
+  if (actualLimit.value == 1) {
+    selections.value = newSelections.length > 0 ? newSelections.slice(-1) : []
+  } else if (newSelections.length <= actualLimit.value) {
     selections.value = newSelections
   }
 }
