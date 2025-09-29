@@ -87,7 +87,7 @@ const title = computed(() => {
         <v-spacer></v-spacer>
 
         <v-btn color="error" @click="closeDialog">Cancel</v-btn>
-        <v-btn color="primary" @click="handleOK">OK</v-btn>
+        <v-btn color="primary" @click="handleOK" variant="flat">OK</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

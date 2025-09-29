@@ -329,7 +329,7 @@ function deleteUpgrade(x: UpgradeKeys) {
             <v-spacer></v-spacer>
 
             <v-btn color="error" @click="closeDialog">Cancel</v-btn>
-            <v-btn color="primary" @click="handleOK">OK</v-btn>
+            <v-btn color="primary" @click="handleOK" variant="flat">OK</v-btn>
           </v-row>
         </v-container>
       </v-card-actions>
