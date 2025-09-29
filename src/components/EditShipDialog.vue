@@ -128,18 +128,17 @@ const upgradeSelector = useTemplateRef('upgrade-selector')
 async function addUpgrade() {
   const selections = (await upgradeSelector.value?.showDialog(
     localShip.value.upgrades,
-    localShip.value.shipType
+    localShip.value.shipType,
+    getUpgradeCountLimit(localShip.value) - localShip.value.upgrades.length
   )) as UpgradeKeys[]
   localShip.value.upgrades.push(...selections)
+  localShip.value.upgrades.sort()
 }
 
 function deleteUpgrade(x: UpgradeKeys) {
   const idx = localShip.value.upgrades.indexOf(x)
-  console.log(`delete: ${localShip.value.upgrades} -- ${idx}`)
   const newupgrades = localShip.value.upgrades.toSpliced(idx, 1)
-  console.log(`toSpliced: ${newupgrades}`)
   localShip.value.upgrades = newupgrades
-  console.log(localShip.value.upgrades)
 }
 </script>
 
@@ -294,7 +293,13 @@ function deleteUpgrade(x: UpgradeKeys) {
             </v-col>
           </v-row>
           <v-row>
-            <v-btn color="primary" @click="addUpgrade"> Add</v-btn>
+            <v-btn
+              color="primary"
+              @click="addUpgrade"
+              :disabled="!shouldShowAddUpgradeButton()"
+            >
+              Add</v-btn
+            >
           </v-row>
         </v-container>
       </v-card-text>

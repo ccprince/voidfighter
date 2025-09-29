@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import { UPGRADES, type ShipType, type UpgradeKeys } from '@/model/model'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { rarityIcon } from './helpers'
 
 const dialog = ref(false)
 const validUpgrades = ref<UpgradeKeys[]>([])
 const selections = ref<UpgradeKeys[]>([])
+const limit = ref(0)
+const actualLimit = computed(
+  () => limit.value + (selections.value.includes('Fully Loaded') ? 2 : 0)
+)
 let resolve: ((value: UpgradeKeys[]) => void) | null = null
 
-const showDialog = (current: UpgradeKeys[], shipType: ShipType) => {
+const showDialog = (
+  current: UpgradeKeys[],
+  shipType: ShipType,
+  maxAllowed: number
+) => {
   validUpgrades.value = Object.entries(UPGRADES)
     .filter(
       ([key, value]) =>
@@ -17,6 +25,7 @@ const showDialog = (current: UpgradeKeys[], shipType: ShipType) => {
     )
     .map(([key]) => key as UpgradeKeys)
   selections.value = []
+  limit.value = maxAllowed
   dialog.value = true
   return new Promise((res) => {
     resolve = res
@@ -34,18 +43,33 @@ const closeDialog = () => {
 }
 
 defineExpose({ showDialog, closeDialog })
+
+function handleUpdateSelections(newSelections: UpgradeKeys[]) {
+  if (newSelections.length <= actualLimit.value) {
+    selections.value = newSelections
+  }
+}
+
+const title = computed(() => {
+  let upTo = 'an'
+  let plural = ''
+  if (actualLimit.value > 1) {
+    upTo = `up to ${actualLimit.value}`
+    plural = 's'
+  }
+  return `Select ${upTo} Upgrade${plural}`
+})
 </script>
 
 <template>
   <v-dialog v-model="dialog" max-width="300" scrollable>
-    <v-card>
-      <v-card-title>Choose Upgrade</v-card-title>
-
+    <v-card :title="title">
       <v-card-text>
         <v-list
           select-strategy="leaf"
-          v-model:selected="selections"
+          :selected="selections"
           density="compact"
+          @update:selected="handleUpdateSelections"
         >
           <v-list-item v-for="u in validUpgrades" :value="u">
             <template #prepend
