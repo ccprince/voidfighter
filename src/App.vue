@@ -16,6 +16,7 @@ import {
   SquadronTrait,
   WeaponArc,
 } from './model/model'
+import { printableVersion } from './model/printable'
 import { validateShip, validateSquadron } from './model/validation'
 
 //
@@ -124,20 +125,57 @@ const totalWithPilots = computed(() =>
 const squadronErrors = computed(() =>
   validateSquadron(squad.value.map((r) => r.ship) as Ship[])
 )
+
+const showNav = ref(false)
+
+function saveAsTextFile(textToWrite: string, filenameToSaveAs: string) {
+  let textFileAsBlob = new Blob([textToWrite], { type: 'text/plain' })
+  let downloadLink = document.createElement('a')
+  downloadLink.download = filenameToSaveAs
+  downloadLink.innerHTML = 'Download file'
+
+  if (window.webkitURL != null) {
+    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob)
+  } else {
+    downloadLink.href = window.URL.createObjectURL(textFileAsBlob)
+    downloadLink.style.display = 'none'
+    document.body.appendChild(downloadLink)
+  }
+
+  downloadLink.click()
+}
+
+function exportSquadron() {
+  let text = `${squadronName.value}\n${squadronTrait.value}\n${leaderTrait.value}\n`
+  console.log(text)
+  text = squad.value.reduce(
+    (acc, r) => acc + printableVersion(r.ship as Ship) + '\n',
+    text
+  )
+  saveAsTextFile(text, (squadronName.value || 'squadron') + '.txt')
+}
 </script>
 
 <template>
   <v-app>
     <v-app-bar color="primary">
+      <v-app-bar-nav-icon @click="showNav = !showNav"></v-app-bar-nav-icon>
       <v-app-bar-title>Voidfighter Squadron Builder</v-app-bar-title>
-
-      <v-btn icon>
-        <v-icon>mdi-import</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-export</v-icon>
-      </v-btn>
     </v-app-bar>
+
+    <v-navigation-drawer v-model="showNav" color="blue-lighten-4" temporary>
+      <v-list-item
+        title="Import Text File"
+        link
+        prepend-icon="mdi-import"
+      ></v-list-item>
+      <v-list-item
+        title="Export Text File"
+        link
+        prepend-icon="mdi-export"
+        @click="exportSquadron"
+      ></v-list-item>
+    </v-navigation-drawer>
 
     <v-main id="main" class="mt-12 pa-5">
       <SquadronInfo
