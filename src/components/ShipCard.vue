@@ -2,6 +2,7 @@
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import { Ship } from '@/model/model'
 import { formatWeapon } from '@/model/printable'
+import { ref } from 'vue'
 
 interface Props {
   ship: Ship
@@ -9,13 +10,18 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const showOverlayWithClick = ref(false)
 
 const emit = defineEmits(['edit', 'delete'])
 </script>
 
 <template>
-  <v-hover v-slot="{ isHovering, props }">
-    <v-container class="shipcard pa-0 position-relative" v-bind="props">
+  <v-hover v-slot="{ isHovering, props }" :model-value="showOverlayWithClick">
+    <v-container
+      class="shipcard pa-0 position-relative"
+      v-bind="props"
+      @click="showOverlayWithClick = !showOverlayWithClick"
+    >
       <v-row class="darkest" no-gutters>
         <v-col cols="12">
           {{ ship.name }} ({{ ship.shipType.toLowerCase() }})
@@ -52,7 +58,7 @@ const emit = defineEmits(['edit', 'delete'])
       <v-overlay
         contained
         absolute
-        v-bind:model-value="!!isHovering"
+        v-bind:model-value="isHovering || showOverlayWithClick"
         class="align-center justify-center"
         persistent
         scrim="white"
