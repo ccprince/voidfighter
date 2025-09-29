@@ -19,6 +19,8 @@ import {
 import { printableVersion } from './model/printable'
 import { validateShip, validateSquadron } from './model/validation'
 
+const appVersion = APP_VERSION
+
 //
 // Edit squadron
 //
@@ -175,6 +177,20 @@ function exportSquadron() {
         prepend-icon="mdi-export"
         @click="exportSquadron"
       ></v-list-item>
+
+      <template #append>
+        <v-list-item prepend-icon="mdi-information"
+          >Version {{ appVersion }}</v-list-item
+        >
+        <v-list-item
+          prepend-icon="mdi-github"
+          link
+          href="https://github.com/ccprince/voidfighter"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Github</v-list-item
+        >
+      </template>
     </v-navigation-drawer>
 
     <v-main id="main" class="mt-12 pa-5">

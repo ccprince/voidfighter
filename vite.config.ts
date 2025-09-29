@@ -13,4 +13,7 @@ export default defineConfig({
     },
   },
   base: '/voidfighter/',
+  define: {
+    APP_VERSION: JSON.stringify(process.env.npm_package_version),
+  },
 })
