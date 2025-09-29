@@ -7,9 +7,14 @@ const props = defineProps<{
   errors: string[]
 }>()
 
-const squadronName = defineModel<string>('squadronName')
-const squadronTrait = defineModel<SquadronTrait>('squadronTrait')
-const leaderTrait = defineModel<string>('leaderTrait')
+const squadronName = defineModel<string | null>('squadronName')
+const squadronTrait = defineModel<SquadronTrait | null>('squadronTrait')
+const leaderTrait = defineModel<string | null>('leaderTrait')
+
+const squadronTraitItems = [
+  { title: 'None', value: null },
+  ...Object.values(SquadronTrait).map((t) => ({ title: t, value: t })),
+]
 
 const validLeaderTraits = [
   'Ace',
@@ -20,6 +25,10 @@ const validLeaderTraits = [
   'Mystical Adept',
   'Need for Speed',
   'Tactician',
+]
+const leaderTraitItems = [
+  { title: 'None', value: null },
+  ...validLeaderTraits.map((t) => ({ title: t, value: t })),
 ]
 </script>
 
@@ -43,7 +52,7 @@ const validLeaderTraits = [
         <v-select
           label="Squadron Trait"
           v-model="squadronTrait"
-          :items="Object.values(SquadronTrait)"
+          :items="squadronTraitItems"
           hide-details
         ></v-select>
       </v-col>
@@ -51,7 +60,7 @@ const validLeaderTraits = [
         <v-select
           label="Leader Trait"
           v-model="leaderTrait"
-          :items="validLeaderTraits"
+          :items="leaderTraitItems"
           hide-details
         ></v-select>
       </v-col>

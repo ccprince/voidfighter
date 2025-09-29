@@ -2,6 +2,7 @@
 import { computed, ref, useTemplateRef } from 'vue'
 import AddShipDialog from './components/AddShipDialog.vue'
 import ConfirmDelete from './components/ConfirmDelete.vue'
+import ConfirmNewSquadron from './components/ConfirmNewSquadron.vue'
 import EditShipDialog from './components/EditShipDialog.vue'
 import ShipCard from './components/ShipCard.vue'
 import SquadronInfo from './components/SquadronInfo.vue'
@@ -25,9 +26,9 @@ const appVersion = APP_VERSION
 // Edit squadron
 //
 
-const squadronName = ref('Screaming Firehawks')
-const squadronTrait = ref<SquadronTrait>(SquadronTrait.BersekerIntelligence)
-const leaderTrait = ref('Ace')
+const squadronName = ref<string | null>(null)
+const squadronTrait = ref<SquadronTrait | null>(null)
+const leaderTrait = ref<string | null>(null)
 
 //
 // Edit ships
@@ -49,6 +50,7 @@ function handleSquadronTrait() {
 
 const editShipDialog = useTemplateRef('edit-ship-dialog')
 const confirmDeleteDialog = useTemplateRef('confirm-delete-dialog')
+const confirmNewSquadronDialog = useTemplateRef('confirm-new-squadron-dialog')
 const shipToEdit = ref(Corvette())
 const shipIdToEdit = ref(0)
 
@@ -188,6 +190,18 @@ function readSquadronFile(event: any) {
     reader.readAsText(file)
   }
 }
+
+async function newSquadron() {
+  const deleteIt = await confirmNewSquadronDialog.value?.showDialog()
+  if (deleteIt) {
+    squadronName.value = null
+    squadronTrait.value = null
+    leaderTrait.value = null
+    squad.value = []
+    showNav.value = false
+  }
+  return deleteIt
+}
 </script>
 
 <template>
@@ -198,6 +212,13 @@ function readSquadronFile(event: any) {
     </v-app-bar>
 
     <v-navigation-drawer v-model="showNav" color="blue-lighten-4" temporary>
+      <v-list-item
+        title="New Squadron"
+        link
+        prepend-icon="mdi-file-document-plus"
+        @click="newSquadron"
+      ></v-list-item>
+      <v-divider thickness="2"></v-divider>
       <v-list-item
         title="Import Text File"
         link
@@ -258,6 +279,9 @@ function readSquadronFile(event: any) {
       ></EditShipDialog>
 
       <ConfirmDelete ref="confirm-delete-dialog"></ConfirmDelete>
+      <ConfirmNewSquadron
+        ref="confirm-new-squadron-dialog"
+      ></ConfirmNewSquadron>
 
       <input
         type="file"
