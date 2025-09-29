@@ -9,7 +9,7 @@ import {
   SquadronTrait,
   WeaponArc,
 } from '../model'
-import { printableVersion } from '../printable'
+import { parsePrintable, printableVersion } from '../printable'
 import { validateShip } from '../validation'
 
 type SampleCase = {
@@ -169,7 +169,7 @@ const ShipsOfTheVoidTigers: SampleCase[] = [
     costWithoutPilot: 27,
     costWithPilot: 30,
     printable:
-      'Auroch (corvette) 27 (30):1:2d10+1:2d10E,2d8T,2d8T:2d8:Fast,Enhanced Turret,Repair,Shields',
+      'Auroch (corvette) 27 (30):1:2d10+1:2d10E,2d8T,2d8T:2d8:Enhanced Turret,Fast,Repair,Shields',
   },
   {
     ship: Corvette({
@@ -597,7 +597,7 @@ const ChildrenOfRa: SampleCase[] = [
     costWithoutPilot: 10,
     costWithPilot: 13,
     printable:
-      'Copperhead (snubfighter) 10 (13):2:2d6:2d6:2d8+1:Agile,Maneuverable,Fast',
+      'Copperhead (snubfighter) 10 (13):2:2d6:2d6:2d8+1:Agile,Fast,Maneuverable',
   },
   {
     ship: Snubfighter({
@@ -610,7 +610,7 @@ const ChildrenOfRa: SampleCase[] = [
     costWithoutPilot: 14,
     costWithPilot: 19,
     printable:
-      'King Cobra (snubfighter) 14 (19):3:2d6:2d8:2d10+1:Agile,Maneuverable,Fast',
+      'King Cobra (snubfighter) 14 (19):3:2d6:2d8:2d10+1:Agile,Fast,Maneuverable',
   },
   {
     ship: Snubfighter({
@@ -815,7 +815,7 @@ const Cnidarians: SampleCase[] = [
     costWithoutPilot: 26,
     costWithPilot: 29,
     printable:
-      'Architeuthis (corvette) 26 (29):1:2d10:2d10E,2d10E:2d8:Fast,Enhanced Turret,Enhanced Turret,Maneuverable,Reinforced Hull',
+      'Architeuthis (corvette) 26 (29):1:2d10:2d10E,2d10E:2d8:Enhanced Turret,Enhanced Turret,Fast,Maneuverable,Reinforced Hull',
   },
   {
     ship: Corvette({
@@ -827,7 +827,7 @@ const Cnidarians: SampleCase[] = [
     costWithoutPilot: 19, // Book says 20; swapped
     costWithPilot: 20, // Book says 19
     printable:
-      "Man O'War (corvette) 19 (20):1:2d10+1:2d10E:2d6:Carrier,Fast,Enhanced Turret,Shields",
+      "Man O'War (corvette) 19 (20):1:2d10+1:2d10E:2d6:Carrier,Enhanced Turret,Fast,Shields",
   },
 ]
 
@@ -858,6 +858,13 @@ function doShipTest(name: string, cases: SampleCase[]) {
     describe('converts to printable', () => {
       it.each(cases)('$ship.name -> $printable', ({ ship, printable }) => {
         expect(printableVersion(ship)).toEqual(printable)
+      })
+    })
+
+    describe('parses from printable', () => {
+      it.each(cases)('$ship.name', ({ ship, printable }) => {
+        const withoutTrait = { ...ship, squadronTrait: null }
+        expect(parsePrintable(printable)).toEqual(withoutTrait)
       })
     })
   })

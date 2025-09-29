@@ -16,7 +16,7 @@ import {
   SquadronTrait,
   WeaponArc,
 } from './model/model'
-import { printableVersion } from './model/printable'
+import { parsePrintable, printableVersion } from './model/printable'
 import { validateShip, validateSquadron } from './model/validation'
 
 const appVersion = APP_VERSION
@@ -156,6 +156,38 @@ function exportSquadron() {
   )
   saveAsTextFile(text, (squadronName.value || 'squadron') + '.txt')
 }
+
+function importSquadron() {
+  document.getElementById('hidden-file-input')?.click()
+}
+
+function readSquadronFile(event: any) {
+  const file = event.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const fileContent = e.target?.result as string
+      const lines = fileContent.split('\n')
+      squadronName.value = lines[0]
+      squadronTrait.value = lines[1] as SquadronTrait
+      leaderTrait.value = lines[2]
+
+      const parsedShips = lines
+        .slice(3)
+        .filter((l) => l.trim().length > 0)
+        .map((l) => {
+          console.log(l)
+          const parsed = parsePrintable(l)
+          parsed.squadronTrait = squadronTrait.value
+          return { id: nextId++, ship: parsed }
+        })
+      squad.value = parsedShips
+
+      showNav.value = false
+    }
+    reader.readAsText(file)
+  }
+}
 </script>
 
 <template>
@@ -170,6 +202,7 @@ function exportSquadron() {
         title="Import Text File"
         link
         prepend-icon="mdi-import"
+        @click="importSquadron"
       ></v-list-item>
       <v-list-item
         title="Export Text File"
@@ -225,6 +258,13 @@ function exportSquadron() {
       ></EditShipDialog>
 
       <ConfirmDelete ref="confirm-delete-dialog"></ConfirmDelete>
+
+      <input
+        type="file"
+        id="hidden-file-input"
+        style="display: none"
+        @change="readSquadronFile"
+      />
     </v-main>
 
     <v-footer>

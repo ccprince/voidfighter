@@ -4,6 +4,17 @@ export enum ShipType {
   Corvette = 'CORVETTE',
 }
 
+export function defenseRatingByType(t: ShipType): Rating {
+  switch (t) {
+    case ShipType.Snubfighter:
+      return Rating.D6
+    case ShipType.Gunship:
+      return Rating.D8
+    case ShipType.Corvette:
+      return Rating.D10
+  }
+}
+
 export class Weapon {
   constructor(
     public readonly firepower: Stat,
@@ -200,7 +211,9 @@ export class Ship {
     protected pilotBase: Rating | null = null,
     public upgrades: UpgradeKeys[] = [],
     public squadronTrait: SquadronTrait | null = null
-  ) {}
+  ) {
+    upgrades.sort()
+  }
 
   get defense(): Stat {
     const shieldsBonus = this.hasUpgrade('Shields') ? 1 : 0
