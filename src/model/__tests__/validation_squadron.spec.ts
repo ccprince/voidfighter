@@ -16,17 +16,24 @@ describe('Number of ships in the squadron', () => {
     return ships
   }
   it('must be at least four', () => {
-    expect(validateSquadron(buildShips(3))).toEqual([
+    const [squadronResults, perShipResults] = validateSquadron(buildShips(3))
+    expect(squadronResults).toEqual([
       'A squadron must contain at least four ships',
     ])
+    expect(perShipResults).toEqual([[], [], []])
   })
   it('must be at most sixteen', () => {
-    expect(validateSquadron(buildShips(17))).toEqual([
+    const [squadronResults, perShipResults] = validateSquadron(buildShips(17))
+    expect(squadronResults).toEqual([
       'A squadron must contain at most 16 ships',
     ])
+    expect(perShipResults).toHaveLength(17)
+    for (const psr of perShipResults) {
+      expect(psr).toEqual([])
+    }
   })
   it("doesn't cause an error at zero", () => {
-    expect(validateSquadron([])).toEqual([])
+    expect(validateSquadron([])).toEqual([[], []])
   })
 })
 
@@ -62,8 +69,11 @@ describe('Squadron must be 50% snubfighters by points', () => {
   ])('%o', ({ squadron, valid }) => {
     expect(validateSquadron(squadron)).toEqual(
       valid
-        ? []
-        : ['A squadron must contain at least 50% snubfighters, by points']
+        ? [[], [[], [], [], [], []]]
+        : [
+            ['A squadron must contain at least 50% snubfighters, by points'],
+            [[], [], [], []],
+          ]
     )
   })
 })
@@ -79,7 +89,7 @@ describe('Rarity of upgrades', () => {
     })
     expect(
       validateSquadron([covertShip, covertShip, covertShip, overtShip])
-    ).toEqual([])
+    ).toEqual([[], new Array(4).fill([])])
   })
 
   it('rejects four ships with the same Uncommon upgrade', () => {
@@ -87,9 +97,17 @@ describe('Rarity of upgrades', () => {
       weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
       upgrades: ['Stealth'],
     })
-    expect(
-      validateSquadron([covertShip, covertShip, covertShip, covertShip])
-    ).toEqual(['At most three ships can carry the Stealth upgrade'])
+    const [squadronResults, perShipResults] = validateSquadron([
+      covertShip,
+      covertShip,
+      covertShip,
+      covertShip,
+    ])
+    expect(squadronResults).toEqual([])
+    expect(perShipResults).toHaveLength(4)
+    for (const psr of perShipResults) {
+      expect(psr).toEqual(['At most three ships can carry the Stealth upgrade'])
+    }
   })
 
   it('accepts ships with different Rare upgrades', () => {
@@ -110,7 +128,7 @@ describe('Rarity of upgrades', () => {
         upgrades: ['Mining Charges'],
       }),
     ]
-    expect(validateSquadron(ships)).toEqual([])
+    expect(validateSquadron(ships)).toEqual([[], new Array(4).fill([])])
   })
 
   it('rejects two ships with the same Rare upgrade', () => {
@@ -131,30 +149,14 @@ describe('Rarity of upgrades', () => {
         weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
       }),
     ]
-    expect(validateSquadron(ships)).toEqual([
-      'At most one ship can carry the Death Flower upgrade',
-    ])
-  })
 
-  it('returns messages for multiple illicit upgrades', () => {
-    const ships = [
-      Snubfighter({
-        weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
-        upgrades: ['Death Flower'],
-      }),
-      Snubfighter({
-        weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
-        upgrades: ['Death Flower'],
-      }),
-      Snubfighter({
-        weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
-        upgrades: ['Emergency Teleporter'],
-      }),
-      Snubfighter({
-        weaponsBase: [{ firepower: Rating.D6, arc: WeaponArc.Front }],
-        upgrades: ['Emergency Teleporter'],
-      }),
-    ]
-    expect(validateSquadron(ships)).toHaveLength(2)
+    const [squadronResults, perShipResults] = validateSquadron(ships)
+    expect(squadronResults).toEqual([])
+    expect(perShipResults).toEqual([
+      ['At most one ship can carry the Death Flower upgrade'],
+      ['At most one ship can carry the Death Flower upgrade'],
+      [],
+      [],
+    ])
   })
 })

@@ -252,8 +252,9 @@ function validateCost(ship: Ship): string | null {
     : null
 }
 
-export function validateSquadron(ships: Ship[]): string[] {
+export function validateSquadron(ships: Ship[]): [string[], string[][]] {
   let results: string[] = []
+  let perShipResults: string[][] = ships.map((s) => [])
 
   let snubfighterPoints = 0
   let totalPoints = 0
@@ -270,21 +271,30 @@ export function validateSquadron(ships: Ship[]): string[] {
   if (ships.length > 16)
     results.push('A squadron must contain at most 16 ships')
 
-  const upgradeCount = new Map<UpgradeKeys, number>()
-  for (const s of ships) {
-    for (const u of s.upgrades) {
-      upgradeCount.set(u, (upgradeCount.get(u) ?? 0) + 1)
+  const shipsWithUpgrade = new Map<UpgradeKeys, number[]>()
+  for (let i = 0; i < ships.length; i++) {
+    for (const u of ships[i].upgrades) {
+      if (!shipsWithUpgrade.get(u)) {
+        shipsWithUpgrade.set(u, [i])
+      } else {
+        shipsWithUpgrade.get(u)!.push(i)
+      }
     }
   }
 
-  upgradeCount.forEach((n, u) => {
-    if (UPGRADES[u].rarity === Rarity.Rare && n > 1)
-      results.push(`At most one ship can carry the ${u} upgrade`)
-    if (UPGRADES[u].rarity === Rarity.Uncommon && n > 3)
-      results.push(`At most three ships can carry the ${u} upgrade`)
+  const addMessage = (message: string, shipIndices: number[]) => {
+    for (const i of shipIndices) perShipResults[i].push(message)
+  }
+
+  shipsWithUpgrade.forEach((s, u) => {
+    if (UPGRADES[u].rarity === Rarity.Rare && s.length > 1) {
+      addMessage(`At most one ship can carry the ${u} upgrade`, s)
+    }
+    if (UPGRADES[u].rarity === Rarity.Uncommon && s.length > 3)
+      addMessage(`At most three ships can carry the ${u} upgrade`, s)
   })
 
-  return results
+  return [results, perShipResults]
 }
 
 function formatShipType(t: ShipType): string {

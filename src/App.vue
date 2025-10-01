@@ -132,9 +132,12 @@ const totalWithPilots = computed(() =>
   squad.value.reduce((acc, r) => acc + costWithPilot(r.ship as Ship), 0)
 )
 
-const squadronErrors = computed(() =>
+const validationErrors = computed(() =>
   validateSquadron(squad.value.map((r) => r.ship) as Ship[])
 )
+
+const squadronErrors = computed(() => validationErrors.value[0])
+const perShipErrors = computed(() => validationErrors.value[1])
 
 const showNav = ref(false)
 
@@ -289,10 +292,10 @@ function printCards() {
 
       <v-sheet class="d-flex flex-wrap align-start ga-3 mb-4">
         <ShipCard
-          v-for="r in squad"
+          v-for="(r, index) in squad"
           key="r.id"
           :ship="r.ship as Ship"
-          :messages="validateShip(r.ship as Ship)"
+          :messages="[...validateShip(r.ship as Ship), ...perShipErrors[index]]"
           @edit="handleEdit(r as ShipRecord)"
           @delete="handleDelete(r as ShipRecord)"
           @clone="handleClone(r as ShipRecord)"
