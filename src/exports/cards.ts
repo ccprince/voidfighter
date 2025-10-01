@@ -210,7 +210,9 @@ function drawShipCard(doc: jsPDF, squadronName: string, ship: Ship) {
     statsHeaderTopLine + points(calculateHeight(statsFontSize) + 3)
   const statsBottomLine =
     statsTopLine +
-    points(calculateHeight(statsFontSize * ship.weapons.length) + 2)
+    points(
+      calculateHeight(statsFontSize * Math.max(ship.weapons.length, 1)) + 2
+    )
   const statsHeaderTopText = statsHeaderTopLine + points(2)
   const statsTopText =
     statsHeaderTopText + points(calculateHeight(statsFontSize) + 3)
