@@ -37,7 +37,7 @@ const leaderTraitItems = [
     <v-row>
       <v-col class="pl-0 pr-0 pb-0 pr-lg-2" cols="12" sm="8" lg="10" order="1">
         <v-text-field
-          label="Name"
+          label="Squadron Name"
           v-model="squadronName"
           hide-details
         ></v-text-field>
