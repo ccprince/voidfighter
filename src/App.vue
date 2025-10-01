@@ -6,6 +6,7 @@ import ConfirmNewSquadron from './components/ConfirmNewSquadron.vue'
 import EditShipDialog from './components/EditShipDialog.vue'
 import ShipCard from './components/ShipCard.vue'
 import SquadronInfo from './components/SquadronInfo.vue'
+import { exportAsPdfCards } from './exports/cards'
 import { costWithoutPilot, costWithPilot } from './model/cost'
 import {
   Corvette,
@@ -202,6 +203,15 @@ async function newSquadron() {
   }
   return deleteIt
 }
+
+function printCards() {
+  exportAsPdfCards(
+    squadronName.value,
+    squadronTrait.value,
+    leaderTrait.value,
+    squad.value.map((r) => r.ship) as Ship[]
+  )
+}
 </script>
 
 <template>
@@ -218,7 +228,9 @@ async function newSquadron() {
         prepend-icon="mdi-file-document-plus"
         @click="newSquadron"
       ></v-list-item>
+
       <v-divider thickness="2"></v-divider>
+
       <v-list-item
         title="Import Text File"
         link
@@ -230,6 +242,15 @@ async function newSquadron() {
         link
         prepend-icon="mdi-export"
         @click="exportSquadron"
+      ></v-list-item>
+
+      <v-divider thickness="2"></v-divider>
+
+      <v-list-item
+        title="Export PDF Cards"
+        link
+        prepend-icon="mdi-cards"
+        @click="printCards"
       ></v-list-item>
 
       <template #append>
