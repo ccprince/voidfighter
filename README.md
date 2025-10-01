@@ -18,4 +18,3 @@ Features current in-plan, though in no particular order:
 
 - Print-friendly layout in the browser
 - Export to PDF
-- Clone an existing ship
