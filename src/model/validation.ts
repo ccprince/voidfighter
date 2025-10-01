@@ -1,3 +1,4 @@
+import { coalesceDuplicateUpgrades, splitDuplicateUpgrade } from '@/helpers.ts'
 import { costWithoutPilot, costWithPilot } from './cost.ts'
 import {
   Rarity,
@@ -273,7 +274,10 @@ export function validateSquadron(ships: Ship[]): [string[], string[][]] {
 
   const shipsWithUpgrade = new Map<UpgradeKeys, number[]>()
   for (let i = 0; i < ships.length; i++) {
-    for (const u of ships[i].upgrades) {
+    const upgrades = coalesceDuplicateUpgrades(ships[i].upgrades).map(
+      (u) => splitDuplicateUpgrade(u)!.upgrade
+    )
+    for (const u of upgrades) {
       if (!shipsWithUpgrade.get(u)) {
         shipsWithUpgrade.set(u, [i])
       } else {

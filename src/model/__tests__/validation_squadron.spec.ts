@@ -159,4 +159,19 @@ describe('Rarity of upgrades', () => {
       [],
     ])
   })
+
+  it('allows four Enhanced Turrets spread across three ships', () => {
+    const twoTurrets = Gunship({
+      upgrades: ['Enhanced Turret', 'Enhanced Turret'],
+    })
+    const oneTurret = Gunship({ upgrades: ['Enhanced Turret'] })
+    const [squadronResults, perShipResults] = validateSquadron([
+      twoTurrets,
+      oneTurret,
+      oneTurret,
+    ])
+    for (const psr of perShipResults) {
+      expect(psr).toEqual([])
+    }
+  })
 })
