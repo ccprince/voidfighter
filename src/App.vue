@@ -43,7 +43,6 @@ interface ShipRecord {
 const squad = ref<ShipRecord[]>([])
 
 function handleSquadronTrait() {
-  console.log(`new trait: ${squadronTrait.value}`)
   for (const record of squad.value) {
     record.ship.squadronTrait = squadronTrait.value
   }
@@ -80,15 +79,12 @@ function handleAddShip(t: ShipType) {
 }
 
 function handleEdit(record: ShipRecord) {
-  console.log(`handleEdit: ship = ${JSON.stringify(record.ship)}`)
   shipToEdit.value = record.ship.copy()
   shipIdToEdit.value = record.id
   editShipDialog.value?.showDialog()
 }
 
 function handleUpdateShip(ship: Ship) {
-  console.log(`handleUpdateShip: ${JSON.stringify(ship)}`)
-
   const newSquad = squad.value.map((r) => {
     if (r.id === shipIdToEdit.value) {
       return { id: r.id, ship }
@@ -152,7 +148,6 @@ function saveAsTextFile(textToWrite: string, filenameToSaveAs: string) {
 
 function exportSquadron() {
   let text = `${squadronName.value}\n${squadronTrait.value}\n${leaderTrait.value}\n`
-  console.log(text)
   text = squad.value.reduce(
     (acc, r) => acc + printableVersion(r.ship as Ship) + '\n',
     text
@@ -172,14 +167,13 @@ function readSquadronFile(event: any) {
       const fileContent = e.target?.result as string
       const lines = fileContent.split('\n')
       squadronName.value = lines[0]
-      squadronTrait.value = lines[1] as SquadronTrait
-      leaderTrait.value = lines[2]
+      squadronTrait.value = handleNull(lines[1]) as SquadronTrait
+      leaderTrait.value = handleNull(lines[2])
 
       const parsedShips = lines
         .slice(3)
         .filter((l) => l.trim().length > 0)
         .map((l) => {
-          console.log(l)
           const parsed = parsePrintable(l)
           parsed.squadronTrait = squadronTrait.value
           return { id: nextId++, ship: parsed }
@@ -190,6 +184,11 @@ function readSquadronFile(event: any) {
     }
     reader.readAsText(file)
   }
+}
+
+function handleNull(s: string): string | null {
+  const trimmed = s.trim()
+  return trimmed != '' && trimmed != 'null' ? s : null
 }
 
 async function newSquadron() {
