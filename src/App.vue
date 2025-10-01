@@ -96,6 +96,15 @@ function handleUpdateShip(ship: Ship) {
   editShipDialog.value?.closeDialog()
 }
 
+function handleClone(record: ShipRecord) {
+  const clonedRecord = {
+    id: nextId++,
+    ship: record.ship.copy(),
+  }
+  const idx = squad.value.findIndex((r) => r.id === record.id)
+  squad.value.splice(idx, 0, clonedRecord)
+}
+
 function handleDelete(r: ShipRecord) {
   doDelete(r.ship.name, r.id)
 }
@@ -286,6 +295,7 @@ function printCards() {
           :messages="validateShip(r.ship as Ship)"
           @edit="handleEdit(r as ShipRecord)"
           @delete="handleDelete(r as ShipRecord)"
+          @clone="handleClone(r as ShipRecord)"
         ></ShipCard>
       </v-sheet>
 

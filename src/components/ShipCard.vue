@@ -2,7 +2,6 @@
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import { Ship } from '@/model/model'
 import { formatWeapon } from '@/model/printable'
-import { ref } from 'vue'
 
 interface Props {
   ship: Ship
@@ -10,18 +9,17 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const showOverlayWithClick = ref(false)
 
-const emit = defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete', 'clone'])
+
+function handleClone() {
+  emit('clone')
+}
 </script>
 
 <template>
-  <v-hover v-slot="{ isHovering, props }" :model-value="showOverlayWithClick">
-    <v-container
-      class="shipcard pa-0 position-relative"
-      v-bind="props"
-      @click="showOverlayWithClick = !showOverlayWithClick"
-    >
+  <v-hover v-slot="{ isHovering, props }">
+    <v-container class="shipcard pa-0 position-relative" v-bind="props">
       <v-row class="darkest" no-gutters>
         <v-col cols="12">
           {{ ship.name }} ({{ ship.shipType.toLowerCase() }})
@@ -65,6 +63,7 @@ const emit = defineEmits(['edit', 'delete'])
         opacity="0.6"
       >
         <v-btn color="primary" @click="emit('edit')" class="mr-2">Edit</v-btn>
+        <v-btn color="primary" @click="handleClone" class="mr-2">Clone</v-btn>
         <v-btn color="error" @click="emit('delete')">Delete</v-btn>
       </v-overlay>
     </v-container>
