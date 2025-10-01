@@ -401,7 +401,7 @@ const ShipsofTheConsolidatedFederation: SampleCase[] = [
     costWithoutPilot: 33,
     costWithPilot: 34,
     printable:
-      'Destrier (corvette) 33 (34):1:2d10+1:2d10T,2d10T,2d8E,2d8E:2d6:Enhanced Turret,Enhanced Turret,Hard Point,Shields',
+      'Destrier (corvette) 33 (34):1:2d10+1:2d10T,2d10T,2d8E,2d8E:2d6:Enhanced Turret x2,Hard Point,Shields',
   },
 ]
 
@@ -815,7 +815,7 @@ const Cnidarians: SampleCase[] = [
     costWithoutPilot: 26,
     costWithPilot: 29,
     printable:
-      'Architeuthis (corvette) 26 (29):1:2d10:2d10E,2d10E:2d8:Enhanced Turret,Enhanced Turret,Fast,Maneuverable,Reinforced Hull',
+      'Architeuthis (corvette) 26 (29):1:2d10:2d10E,2d10E:2d8:Enhanced Turret x2,Fast,Maneuverable,Reinforced Hull',
   },
   {
     ship: Corvette({

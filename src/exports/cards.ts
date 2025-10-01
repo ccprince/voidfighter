@@ -1,4 +1,4 @@
-import { formatUpgrades } from '@/helpers'
+import { coalesceDuplicateUpgrades, formatUpgrades } from '@/helpers'
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import { ShipType, SquadronTrait, type Ship } from '@/model/model'
 import { formatWeapon } from '@/model/printable'
@@ -326,7 +326,10 @@ function drawStats(
 function drawUpgrades(doc: jsPDF, ship: Ship, fontSize: number, top: number) {
   doc.setFontSize(fontSize)
   doc.setFont('helvetica', 'italic')
-  const joined = formatUpgrades(ship.upgrades, '\xa0')
+  const joined = formatUpgrades(
+    coalesceDuplicateUpgrades(ship.upgrades),
+    '\xa0'
+  )
   const wrapped = doc.splitTextToSize(joined, 4.125)
   doc.text(wrapped, 2.5, top, { align: 'center', baseline: 'top' })
 }

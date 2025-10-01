@@ -11,19 +11,22 @@ import {
 import { getUpgradeCountLimit, validateShip } from '@/model/validation'
 import { computed, ref, useTemplateRef, watch } from 'vue'
 import { useDisplay } from 'vuetify'
-import { rarityIcon } from '../helpers'
+import {
+  coalesceDuplicateUpgrades,
+  rarityIcon,
+  splitDuplicateUpgrade,
+} from '../helpers'
 import UpgradeSelector from './UpgradeSelector.vue'
 
 const { xs } = useDisplay()
 
 const props = defineProps(['ship'])
 const emit = defineEmits(['update:ship', 'delete'])
-let key = 0
+const showChip = ref(true)
 
 const localShip = ref(props.ship)
 watch(props, () => {
   localShip.value = props.ship
-  key = 0
 })
 
 const cost = computed(() => costWithoutPilot(localShip.value))
@@ -148,6 +151,12 @@ function deleteUpgrade(x: UpgradeKeys) {
   const newupgrades = localShip.value.upgrades.toSpliced(idx, 1)
   localShip.value.upgrades = newupgrades
 }
+
+const processedUpgrades = computed(() => {
+  return coalesceDuplicateUpgrades(localShip.value.upgrades).map((x) =>
+    splitDuplicateUpgrade(x)
+  )
+})
 </script>
 
 <template>
@@ -289,14 +298,20 @@ function deleteUpgrade(x: UpgradeKeys) {
             <v-col>
               <div class="d-flex ga-2 flex-wrap">
                 <v-chip
-                  v-for="u in localShip.upgrades"
-                  closable
-                  :key="key++"
-                  :prepend-icon="rarityIcon(u)"
+                  v-for="{ upgrade, count } in processedUpgrades"
+                  :key="upgrade"
+                  :prepend-icon="rarityIcon(upgrade)"
                   size="large"
-                  @click:close="deleteUpgrade(u)"
-                  >{{ u }}</v-chip
                 >
+                  {{ upgrade }}<span v-if="count > 1">&nbsp;x{{ count }}</span>
+                  <template #append>
+                    <v-icon
+                      icon="mdi-close-circle"
+                      class="v-icon--end"
+                      @click="deleteUpgrade(upgrade)"
+                    ></v-icon>
+                  </template>
+                </v-chip>
               </div>
             </v-col>
           </v-row>

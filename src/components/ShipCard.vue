@@ -2,7 +2,7 @@
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import { Ship } from '@/model/model'
 import { formatWeapon } from '@/model/printable'
-import { formatUpgrades } from '../helpers'
+import { coalesceDuplicateUpgrades, formatUpgrades } from '../helpers'
 
 interface Props {
   ship: Ship
@@ -44,9 +44,11 @@ function handleClone() {
         <v-col class="pa-1">{{ ship.pilot }}</v-col>
       </v-row>
       <v-row class="light" no-gutters>
-        <v-col class="pa-1">{{
-          formatUpgrades(ship.upgrades, '&nbsp;')
-        }}</v-col>
+        <v-col class="pa-1"
+          >{{
+            formatUpgrades(coalesceDuplicateUpgrades(ship.upgrades), '&nbsp;')
+          }}
+        </v-col>
       </v-row>
       <v-row no-gutters v-if="messages.length > 0" class="bg-red-lighten-4">
         <v-col class="pl-6 pt-1 pb-1">

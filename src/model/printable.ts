@@ -1,3 +1,7 @@
+import {
+  coalesceDuplicateUpgrades,
+  expandDuplicateUpgrades,
+} from '@/helpers.ts'
 import { costWithoutPilot, costWithPilot } from './cost.ts'
 import {
   defenseRatingByType,
@@ -13,7 +17,7 @@ import {
 export function printableVersion(ship: Ship): string {
   const nameBlock = `${ship.name} (${ship.shipType.toString().toLowerCase()}) ${costWithoutPilot(ship)} (${costWithPilot(ship)})`
   const weaponBlock = ship.weapons.map(formatWeapon).join(',')
-  const upgradesBlock = ship.upgrades.join(',')
+  const upgradesBlock = coalesceDuplicateUpgrades(ship.upgrades).join(',')
 
   return `${nameBlock}:${ship.speed}:${ship.defense}:${weaponBlock}:${ship.pilot}:${upgradesBlock}`
 }
@@ -42,7 +46,7 @@ export function parsePrintable(input: string): Ship {
   const weapons = parseWeapons(weaponsBlock)
   const pilotRating = extractRating(pilotBlock)
   const upgrades = upgradesBlock
-    ? (upgradesBlock.split(',') as UpgradeKeys[])
+    ? expandDuplicateUpgrades(upgradesBlock.split(',') as UpgradeKeys[])
     : []
   upgrades.sort()
 
