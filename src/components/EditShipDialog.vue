@@ -11,8 +11,8 @@ import {
 import { getUpgradeCountLimit, validateShip } from '@/model/validation'
 import { computed, ref, useTemplateRef, watch } from 'vue'
 import { useDisplay } from 'vuetify'
+import { rarityIcon } from '../helpers'
 import UpgradeSelector from './UpgradeSelector.vue'
-import { rarityIcon } from './helpers'
 
 const { xs } = useDisplay()
 

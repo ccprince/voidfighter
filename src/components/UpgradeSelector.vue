@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { UPGRADES, type ShipType, type UpgradeKeys } from '@/model/model'
 import { computed, ref } from 'vue'
-import { rarityIcon } from './helpers'
+import { rarityIcon } from '../helpers'
 
 const dialog = ref(false)
 const validUpgrades = ref<UpgradeKeys[]>([])

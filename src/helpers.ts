@@ -6,3 +6,11 @@ export function rarityIcon(u: UpgradeKeys): string {
     return 'mdi-alpha-u-circle-outline'
   else return 'mdi-alpha-c-circle-outline'
 }
+
+export function formatUpgrades(
+  upgrades: UpgradeKeys[],
+  spaceReplacement: string = ' '
+): string {
+  const unbreakable = upgrades.map((u) => u.replaceAll(' ', spaceReplacement))
+  return unbreakable.join(', ')
+}
