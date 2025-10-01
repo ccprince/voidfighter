@@ -56,7 +56,7 @@ function handleClone() {
       <v-overlay
         contained
         absolute
-        v-bind:model-value="isHovering || showOverlayWithClick"
+        v-bind:model-value="!!isHovering"
         class="align-center justify-center"
         persistent
         scrim="white"
