@@ -1,8 +1,14 @@
-import { coalesceDuplicateUpgrades, formatUpgrades } from '@/helpers'
 import { costWithoutPilot, costWithPilot } from '@/model/cost'
 import { ShipType, SquadronTrait, type Ship } from '@/model/model'
-import { formatWeapon } from '@/model/printable'
-import jsPDF, { type TextOptionsLight } from 'jspdf'
+import jsPDF from 'jspdf'
+import {
+  calculateHeight,
+  drawColumns,
+  drawShipCard,
+  points,
+  type FontSizes,
+  type Landmarks,
+} from './common'
 
 export function exportAsPdfCards(
   squadronName: string | null,
@@ -19,10 +25,32 @@ export function exportAsPdfCards(
   doc.setLineWidth(points(1))
   doc.setDrawColor('#444444')
 
+  const dimensions = {
+    startX: 0.25,
+    startY: 0.25,
+    width: 4.5,
+  }
+
+  const fontSizes: FontSizes = {
+    shipName: 14,
+    shipType: 10,
+    stats: 12,
+    upgrades: 11,
+    locations: 10,
+  }
+
   drawSquadronCard(doc, squadronName, squadronTrait, leaderTrait, ships)
   for (const s of ships) {
     doc.addPage()
-    drawShipCard(doc, squadronName ?? 'Unnamed Squadron', s)
+    const landmarks = calculateLandmarks(0.25, fontSizes, s.weapons.length)
+    drawShipCard(
+      doc,
+      s,
+      squadronName ?? 'Unnamed Squadron',
+      dimensions,
+      fontSizes,
+      landmarks
+    )
   }
 
   doc.save((squadronName ?? 'squadron') + '.pdf')
@@ -58,7 +86,7 @@ function drawSquadronCard(
 
 function drawSquadronBoxes(doc: jsPDF, boxTop: number) {
   doc.rect(0.25, boxTop, 4.5, 2.75 - boxTop)
-  drawColumns(doc, boxTop, 2.75, 2)
+  drawColumns(doc, { startX: 0.25, startY: 0.25, width: 4.5 }, boxTop, 2.75, 2)
 }
 
 function drawSquadronHeader(
@@ -197,181 +225,36 @@ function filterAndFormat(ships: Ship[], type: ShipType): string[] {
     .toSorted()
 }
 
-function drawShipCard(doc: jsPDF, squadronName: string, ship: Ship) {
-  const shipNameFontSize = 14
-  const shipTypeFontSize = 10
-  const statsFontSize = 12
-  const upgradesFontSize = 11
-  const locationsFontSize = 10
-
+function calculateLandmarks(
+  startY: number,
+  fontSizes: FontSizes,
+  numberOfWeapons: number
+): Landmarks {
   const statsHeaderTopLine =
-    0.25 + points(calculateHeight(shipNameFontSize, shipTypeFontSize) + 4)
+    0.25 + points(calculateHeight(fontSizes.shipName, fontSizes.shipType) + 4)
   const statsTopLine =
-    statsHeaderTopLine + points(calculateHeight(statsFontSize) + 3)
+    statsHeaderTopLine + points(calculateHeight(fontSizes.stats) + 3)
   const statsBottomLine =
     statsTopLine +
-    points(
-      calculateHeight(statsFontSize * Math.max(ship.weapons.length, 1)) + 2
-    )
+    points(calculateHeight(fontSizes.stats * Math.max(numberOfWeapons, 1)) + 2)
   const statsHeaderTopText = statsHeaderTopLine + points(2)
   const statsTopText =
-    statsHeaderTopText + points(calculateHeight(statsFontSize) + 3)
+    statsHeaderTopText + points(calculateHeight(fontSizes.stats) + 3)
   const upgradesTop = statsBottomLine + points(4)
   const locationsTopLine =
-    2.75 - points(calculateHeight(locationsFontSize) * 2 + 4)
+    2.75 - points(calculateHeight(fontSizes.locations) * 2 + 4)
   const locationsTextTop = locationsTopLine + points(2)
 
-  drawBoxes(
-    doc,
+  return {
+    headerTextTop: 0.25,
     statsHeaderTopLine,
     statsTopLine,
     statsBottomLine,
-    locationsTopLine
-  )
-  drawHeader(doc, squadronName, ship, shipNameFontSize, shipTypeFontSize)
-  drawStats(doc, ship, statsFontSize, statsHeaderTopText, statsTopText)
-  drawUpgrades(doc, ship, upgradesFontSize, upgradesTop)
-  drawLocations(doc, locationsFontSize, locationsTextTop)
-}
-
-function drawBoxes(
-  doc: jsPDF,
-  statsHeaderTopLine: number,
-  statsTopLine: number,
-  statsBottomLine: number,
-  locationsTopLine: number
-) {
-  doc.setFillColor('#d7deeb')
-  doc.rect(
-    0.25,
-    statsHeaderTopLine,
-    4.5,
-    statsTopLine - statsHeaderTopLine,
-    'F'
-  )
-  doc.rect(0.25, locationsTopLine, 4.5, 2.75 - locationsTopLine, 'F')
-
-  doc.rect(0.25, statsHeaderTopLine, 4.5, 2.75 - statsHeaderTopLine)
-  doc.line(0.25, statsTopLine, 4.75, statsTopLine)
-  drawColumns(doc, statsHeaderTopLine, statsBottomLine, 4)
-  doc.line(0.25, statsBottomLine, 4.75, statsBottomLine)
-
-  doc.line(0.25, locationsTopLine, 4.75, locationsTopLine)
-  drawColumns(doc, locationsTopLine, 2.75, 5)
-}
-
-function drawColumns(doc: jsPDF, top: number, bottom: number, count: number) {
-  const columnWidth = 4.5 / count
-  for (let x = 0.25 + columnWidth; x < 4.75; x += columnWidth) {
-    doc.line(x, top, x, bottom)
+    statsHeaderTopText,
+    statsTextTop: statsTopText,
+    upgradesTop,
+    locationsTopLine,
+    locationsTextTop,
+    bottomLine: 2.75,
   }
-}
-
-function drawHeader(
-  doc: jsPDF,
-  squadronName: string,
-  ship: Ship,
-  shipNameFontSize: number,
-  shipTypeFontSize: number
-) {
-  doc.setTextColor('#000000')
-  doc.setFontSize(shipNameFontSize)
-  doc.setFont('helvetica', 'bolditalic')
-  doc.text(ship.name.toUpperCase(), 0.25, 0.25, {
-    align: 'left',
-    baseline: 'top',
-  })
-  doc.setFont('helvetica', 'bold')
-  doc.text(`${costWithoutPilot(ship)} (${costWithPilot(ship)})`, 4.75, 0.25, {
-    align: 'right',
-    baseline: 'top',
-  })
-
-  doc.setFontSize(shipTypeFontSize)
-  doc.setTextColor('#444444')
-  doc.setFont('helvetica', 'italic')
-  doc.text(
-    `${ship.shipType.toUpperCase()} — ${squadronName.toUpperCase()}`,
-    0.25,
-    0.25 + points(14 * 1.15),
-    {
-      align: 'left',
-      baseline: 'top',
-    }
-  )
-}
-
-function drawStats(
-  doc: jsPDF,
-  ship: Ship,
-  statsFontSize: number,
-  headerTextTop: number,
-  textTop: number
-) {
-  doc.setFontSize(statsFontSize)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor('#000000')
-  drawTextColumns(doc, ['Spd', 'Def', 'FP', 'Plt'], headerTextTop)
-  doc.setFont('helvetica', 'normal')
-  drawTextColumns(
-    doc,
-    [
-      ship.speed.toString(),
-      ship.defense.toString(),
-      ship.weapons.map((w) => formatWeapon(w)),
-      ship.pilot?.toString() ?? '-',
-    ],
-    textTop
-  )
-}
-
-function drawUpgrades(doc: jsPDF, ship: Ship, fontSize: number, top: number) {
-  doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'italic')
-  const joined = formatUpgrades(
-    coalesceDuplicateUpgrades(ship.upgrades),
-    '\xa0'
-  )
-  const wrapped = doc.splitTextToSize(joined, 4.125)
-  doc.text(wrapped, 2.5, top, { align: 'center', baseline: 'top' })
-}
-
-function drawLocations(doc: jsPDF, fontSize: number, textTop: number) {
-  doc.setFontSize(fontSize)
-  doc.setFont('helvetica', 'italic')
-  drawTextColumns(
-    doc,
-    [
-      ['Crew', '(2/12)'],
-      ['Engine', '(3/11)'],
-      ['Weapon', '(4/10)'],
-      ['Systems', '(5/9)'],
-      ['Structure', '(6/8)'],
-    ],
-    textTop
-  )
-}
-
-function drawTextColumns(
-  doc: jsPDF,
-  text: (string | string[])[],
-  location: number
-) {
-  const columnWidth = 4.5 / text.length
-  for (let i = 0; i < text.length; i++) {
-    const x = 0.25 + columnWidth / 2 + i * columnWidth
-    doc.text(text[i], x, location, {
-      align: 'center',
-      baseline: 'top',
-    } as TextOptionsLight)
-  }
-}
-
-function points(x: number): number {
-  return x / 72.0
-}
-
-function calculateHeight(...lines: number[]): number {
-  const sum = lines.reduce((a, l) => a + l, 0)
-  return sum * 1.15
 }

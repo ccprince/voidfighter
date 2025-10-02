@@ -7,6 +7,7 @@ import EditShipDialog from './components/EditShipDialog.vue'
 import ShipCard from './components/ShipCard.vue'
 import SquadronInfo from './components/SquadronInfo.vue'
 import { exportAsPdfCards } from './exports/cards'
+import { exportAsPdfSheet } from './exports/sheet'
 import { costWithoutPilot, costWithPilot } from './model/cost'
 import {
   Corvette,
@@ -223,6 +224,15 @@ function printCards() {
     squad.value.map((r) => r.ship) as Ship[]
   )
 }
+
+function printSheet() {
+  exportAsPdfSheet(
+    squadronName.value,
+    squadronTrait.value,
+    leaderTrait.value,
+    squad.value.map((r) => r.ship) as Ship[]
+  )
+}
 </script>
 
 <template>
@@ -257,6 +267,12 @@ function printCards() {
 
       <v-divider thickness="2"></v-divider>
 
+      <v-list-item
+        title="Export PDF"
+        link
+        prepend-icon="mdi-file-export"
+        @click="printSheet"
+      ></v-list-item>
       <v-list-item
         title="Export PDF Cards"
         link
