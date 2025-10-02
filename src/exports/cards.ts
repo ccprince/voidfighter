@@ -68,7 +68,7 @@ function drawSquadronCard(
   const shipsFontSize = 12
 
   const shipBoxTop =
-    0.25 + points(calculateHeight(nameFontSize, traitsFontSize) + 2)
+    0.25 + calculateHeight(nameFontSize, traitsFontSize) + points(2)
   const shipTextTop = shipBoxTop + points(2)
 
   drawSquadronBoxes(doc, shipBoxTop)
@@ -123,7 +123,7 @@ function drawSquadronHeader(
   doc.text(
     `TRAITS: ${traitLine.join(', ') || 'none'}`.toUpperCase(),
     0.25,
-    0.25 + points(calculateHeight(nameFontSize)),
+    0.25 + calculateHeight(nameFontSize),
     {
       align: 'left',
       baseline: 'top',
@@ -158,7 +158,7 @@ function drawShipList(
   let currentType = 0
   let n = 0
   let shipsPlaced = 0
-  const lineHeight = points(calculateHeight(fontSize))
+  const lineHeight = calculateHeight(fontSize)
   while (shipsPlaced < ships.length) {
     if (header && formatted[currentType].length == 0) {
       currentType++
@@ -231,18 +231,19 @@ function calculateLandmarks(
   numberOfWeapons: number
 ): Landmarks {
   const statsHeaderTopLine =
-    0.25 + points(calculateHeight(fontSizes.shipName, fontSizes.shipType) + 4)
+    0.25 + calculateHeight(fontSizes.shipName, fontSizes.shipType) + points(4)
   const statsTopLine =
-    statsHeaderTopLine + points(calculateHeight(fontSizes.stats) + 3)
+    statsHeaderTopLine + calculateHeight(fontSizes.stats) + points(3)
   const statsBottomLine =
     statsTopLine +
-    points(calculateHeight(fontSizes.stats * Math.max(numberOfWeapons, 1)) + 2)
+    calculateHeight(fontSizes.stats * Math.max(numberOfWeapons, 1)) +
+    points(2)
   const statsHeaderTopText = statsHeaderTopLine + points(2)
   const statsTopText =
-    statsHeaderTopText + points(calculateHeight(fontSizes.stats) + 3)
+    statsHeaderTopText + calculateHeight(fontSizes.stats) + points(3)
   const upgradesTop = statsBottomLine + points(4)
   const locationsTopLine =
-    2.75 - points(calculateHeight(fontSizes.locations) * 2 + 4)
+    2.75 - calculateHeight(fontSizes.locations, fontSizes.locations) - points(4)
   const locationsTextTop = locationsTopLine + points(2)
 
   return {

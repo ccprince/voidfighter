@@ -47,13 +47,12 @@ export function exportAsPdfSheet(
   let x = 0.5
   const topY =
     0.5 +
-    points(
-      calculateHeight(
-        pageHeaderFontSize,
-        pageSubHeaderFontSize,
-        pageSubHeaderFontSize
-      ) + 4
-    )
+    calculateHeight(
+      pageHeaderFontSize,
+      pageSubHeaderFontSize,
+      pageSubHeaderFontSize
+    ) +
+    points(4)
 
   let page = 1
   let y = topY
@@ -88,7 +87,7 @@ export function exportAsPdfSheet(
         doc.setFontSize(12)
         doc.text(`Page ${page}`, 8.0, 0.5, { align: 'right', baseline: 'top' })
         x = 0.5
-        y = 0.5 + points(calculateHeight(pageHeaderFontSize) + 4)
+        y = 0.5 + calculateHeight(pageHeaderFontSize) + points(4)
       }
       landmarks = calculateLandmarks(
         y,
@@ -116,24 +115,25 @@ function calculateLandmarks(
   const headerTextTop = startY + points(2)
   const statsHeaderTopLine =
     headerTextTop +
-    points(calculateHeight(fontSize.shipName, fontSize.shipType) + 4)
+    calculateHeight(fontSize.shipName, fontSize.shipType) +
+    points(4)
   const statsTopLine =
-    statsHeaderTopLine + points(calculateHeight(fontSize.stats) + 3)
+    statsHeaderTopLine + calculateHeight(fontSize.stats) + points(3)
   const statsBottomLine =
     statsTopLine +
-    points(calculateHeight(fontSize.stats * Math.max(numberOfWeapons, 1)) + 2)
+    calculateHeight(fontSize.stats * Math.max(numberOfWeapons, 1)) +
+    points(2)
   const statsHeaderTopText = statsHeaderTopLine + points(2)
   const statsTopText =
-    statsHeaderTopText + points(calculateHeight(fontSize.stats) + 3)
+    statsHeaderTopText + calculateHeight(fontSize.stats) + points(3)
   const upgradesTop = statsBottomLine + points(4)
   const locationsTopLine =
     upgradesTop +
-    points(
-      calculateHeight(fontSize.upgrades * Math.max(linesOfUpgrades, 1)) + 2
-    )
+    calculateHeight(fontSize.upgrades * Math.max(linesOfUpgrades, 1)) +
+    points(2)
   const locationsTextTop = locationsTopLine + points(2)
   const bottomLine =
-    locationsTextTop + points(calculateHeight(fontSize.locations) * 2 + 2)
+    locationsTextTop + calculateHeight(fontSize.locations) * 2 + points(2)
 
   return {
     headerTextTop,
@@ -175,7 +175,7 @@ function drawPageHeader(
 
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(subHeaderFontSize)
-  const subHeaderTextTop = 0.5 + points(calculateHeight(headerFontSize))
+  const subHeaderTextTop = 0.5 + calculateHeight(headerFontSize)
   doc.text(
     `SQUADRON TRAIT: ${squadronTrait?.toUpperCase() ?? 'NONE'}`,
     0.5,
@@ -185,7 +185,7 @@ function drawPageHeader(
   doc.text(
     `LEADER TRAIT: ${leaderTrait?.toUpperCase() ?? 'NONE'}`,
     0.5,
-    subHeaderTextTop + points(calculateHeight(subHeaderFontSize)),
+    subHeaderTextTop + calculateHeight(subHeaderFontSize),
     {
       align: 'left',
       baseline: 'top',

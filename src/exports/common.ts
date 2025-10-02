@@ -11,7 +11,7 @@ export function points(x: number): number {
 
 export function calculateHeight(...lines: number[]): number {
   const sum = lines.reduce((a, l) => a + l, 0)
-  return sum * 1.15
+  return points(sum * 1.15)
 }
 
 export type Dimensions = {
