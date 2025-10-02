@@ -4,7 +4,7 @@
   "author": "Charles Prince",
   "homepage": "https://ccprince.github.io/voidfighter/",
   "repository": "https://github.com/ccprince/voidfighter",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "engines": {

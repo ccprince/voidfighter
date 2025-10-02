@@ -16,5 +16,4 @@ though they don't do anything; they'll still be included on the sheets.
 
 Features current in-plan, though in no particular order:
 
-- Print-friendly layout in the browser
-- Export to PDF
+_(None at the moment; I think it's feature-complete.)_
